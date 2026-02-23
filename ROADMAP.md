@@ -52,27 +52,27 @@
 
 ### Morning — Basic agent + one tool
 
-- [ ] **Repo:** Fork chosen repo (if not done); create `agent` or `api` area for agent code.
-- [ ] **Stack:** Init backend (e.g. Python/FastAPI or Node/Express); add agent framework and LLM client.
-- [ ] **Tool registry:** Define first tool (schema + description + execution). Pick highest-value, simplest tool (e.g. `drug_interaction_check` or `portfolio_analysis`).
-- [ ] **Orchestrator:** Single agent flow: user message → LLM → optional tool call → response.
-- [ ] **End-to-end:** One natural language query → one tool call → structured result → coherent reply. No crashes.
+- [x] **Repo:** Fork chosen repo (if not done); create `agent` or `api` area for agent code.
+- [x] **Stack:** Init backend (e.g. Python/FastAPI or Node/Express); add agent framework and LLM client.
+- [x] **Tool registry:** Define first tool (schema + description + execution). Pick highest-value, simplest tool (e.g. `drug_interaction_check` or `portfolio_analysis`).
+- [x] **Orchestrator:** Single agent flow: user message → LLM → optional tool call → response.
+- [x] **End-to-end:** One natural language query → one tool call → structured result → coherent reply. No crashes.
 
 ### Afternoon — Expand tools + memory + errors
 
-- [ ] **Tools 2 & 3 (minimum 3):** Add two more tools; same pattern (schema, execute, structured return). Verify each in isolation.
-- [ ] **Conversation history:** Persist or pass conversation context across turns (memory component).
-- [ ] **Error handling:** Try/except around tool execution and LLM calls; graceful messages; no uncaught exceptions.
-- [ ] **Verification (≥1):** One domain-specific check (e.g. fact check, constraint, or “no medical advice” guardrail).
+- [x] **Tools 2 & 3 (minimum 3):** Add two more tools; same pattern (schema, execute, structured return). Verify each in isolation.
+- [x] **Conversation history:** Persist or pass conversation context across turns (memory component).
+- [x] **Error handling:** Try/except around tool execution and LLM calls; graceful messages; no uncaught exceptions.
+- [x] **Verification (≥1):** One domain-specific check (e.g. fact check, constraint, or “no medical advice” guardrail).
 
 ### Evening — Eval + deploy
 
-- [ ] **Simple evaluation:** 5+ test cases with expected outcomes (input, expected tool call/result, pass/fail). Run and record results.
+- [x] **Simple evaluation:** 5+ test cases with expected outcomes (input, expected tool call/result, pass/fail). Run and record results.
 - [ ] **Deploy:** Deploy to Vercel / Railway / Modal / cloud. Public URL.
 - [ ] **Smoke test:** Run MVP checklist from PRD against deployed app.
 
 **MVP gate checklist (all required):**  
-☐ Natural language in domain ☐ ≥3 tools ☐ Structured tool results ☐ Synthesis of results ☐ Conversation history ☐ Basic error handling ☐ ≥1 verification ☐ 5+ test cases ☐ Deployed & public
+☑ Natural language in domain ☑ ≥3 tools ☑ Structured tool results ☑ Synthesis of results ☑ Conversation history ☑ Basic error handling ☑ ≥1 verification ☑ 5+ test cases ☐ Deployed & public
 
 ---
 

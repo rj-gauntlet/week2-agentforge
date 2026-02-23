@@ -6,24 +6,21 @@ This project uses **test-driven development (TDD)** for the MVP. Tests define th
 
 ## Quick start
 
-```bash
-# 1. From project root, create a venv (recommended) and install dependencies
+We use the venv’s Python by path (no activation). From the project root:
+
+```powershell
+cd c:\Users\rjxxl\projects\week2-agentforge
 python -m venv .venv
-.venv\Scripts\activate   # Windows
-# source .venv/bin/activate  # macOS/Linux
-pip install -r requirements.txt
+.\.venv\Scripts\pip.exe install -r requirements.txt
+copy .env.example .env
+```
 
-# Copy env (add your LLM API key when you need the agent)
-cp .env.example .env
+Run tests (copy-paste; no activation):
 
-# Run all tests (unit + integration + eval)
-pytest
-
-# Run only unit tests (fast; no LLM calls)
-pytest tests/unit -v
-
-# Run only eval cases (once agent exists)
-pytest tests/eval -v -m eval
+```powershell
+.\.venv\Scripts\python.exe -m pytest
+.\.venv\Scripts\python.exe -m pytest tests/unit -v
+.\.venv\Scripts\python.exe -m pytest tests/eval -v -m eval
 ```
 
 ---
@@ -52,7 +49,7 @@ Unit tests do not need any API key.
 
 ## TDD loop (red → green → refactor)
 
-1. **Red:** Write a failing test (or run existing ones: `pytest tests/unit -v`). You should see failures.
+1. **Red:** Write a failing test (or run existing ones: `.\.venv\Scripts\python.exe -m pytest tests/unit -v`). You should see failures.
 2. **Green:** Implement the minimum code (e.g. `agent/tools/drug_interaction_check.py`) so the test passes.
 3. **Refactor:** Clean up without changing behavior; tests stay green.
 
@@ -63,7 +60,7 @@ Unit tests do not need any API key.
 ## What you need to do to succeed
 
 1. **Run tests from the project root:**  
-   `cd c:\Users\rjxxl\projects\week2-agentforge` then `pytest tests/unit -v`.
+   `cd c:\Users\rjxxl\projects\week2-agentforge` then `.\.venv\Scripts\python.exe -m pytest tests/unit -v`.
 
 2. **Implement one tool at a time:**  
    Start with `drug_interaction_check`: add a small JSON/CSV of known interactions (e.g. aspirin+ibuprofen → minor, warfarin+aspirin → major), load it in the tool, and return the right shape so unit tests pass.
@@ -75,16 +72,18 @@ Unit tests do not need any API key.
    Once you have an orchestrator (LangChain agent + tools), add integration tests that send a query and assert the right tool was called and the response is coherent. Eval cases in `tests/eval/test_eval_mvp.py` can then call the agent instead of skipping.
 
 5. **Eval cases = your 5+ MVP tests:**  
-   Each row in `test_eval_mvp.py` (or a data file you load) is one test case: input query, expected tool(s), and a condition on the output. Running `pytest tests/eval` is your “simple evaluation” for the MVP gate.
+   Each row in `test_eval_mvp.py` (or a data file you load) is one test case: input query, expected tool(s), and a condition on the output. Running `.\.venv\Scripts\python.exe -m pytest tests/eval` is your “simple evaluation” for the MVP gate.
 
 ---
 
 ## Commands reference
 
-```bash
-pytest                    # all tests
-pytest tests/unit -v      # unit only
-pytest -m unit            # by marker
-pytest -m "not eval"      # skip eval (e.g. while building)
-pytest --tb=long         # full tracebacks
+Use the venv’s Python (no activation):
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest                    # all tests
+.\.venv\Scripts\python.exe -m pytest tests/unit -v      # unit only
+.\.venv\Scripts\python.exe -m pytest -m unit            # by marker
+.\.venv\Scripts\python.exe -m pytest -m "not eval"      # skip eval
+.\.venv\Scripts\python.exe -m pytest --tb=long         # full tracebacks
 ```
