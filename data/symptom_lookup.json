@@ -1,0 +1,19 @@
+{
+  "symptoms": [
+    {
+      "symptom": "headache",
+      "possible_conditions": ["tension headache", "migraine", "dehydration"],
+      "urgency": "low"
+    },
+    {
+      "symptom": "chest pain",
+      "possible_conditions": ["musculoskeletal", "GERD", "cardiac - seek immediate evaluation"],
+      "urgency": "high"
+    },
+    {
+      "symptom": "fever",
+      "possible_conditions": ["viral infection", "bacterial infection", "other"],
+      "urgency": "medium"
+    }
+  ]
+}

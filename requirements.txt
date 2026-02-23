@@ -1,0 +1,16 @@
+# Agent & LLM
+langchain>=0.3.0
+langchain-openai>=0.2.0
+langchain-anthropic>=0.2.0
+python-dotenv>=1.0.0
+
+# API (MVP)
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+
+# Testing (TDD)
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
+
+# Optional: observability (add when integrating LangSmith)
+# langsmith>=0.1.0

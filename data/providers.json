@@ -1,0 +1,28 @@
+{
+  "providers": [
+    {
+      "id": "prov_001",
+      "name": "Dr. Jane Smith",
+      "specialty": "cardiology",
+      "location": "Austin, TX"
+    },
+    {
+      "id": "prov_002",
+      "name": "Dr. John Doe",
+      "specialty": "cardiology",
+      "location": "Austin, TX"
+    },
+    {
+      "id": "prov_003",
+      "name": "Dr. Alice Brown",
+      "specialty": "pediatrics",
+      "location": "Austin, TX"
+    },
+    {
+      "id": "prov_004",
+      "name": "Dr. Bob Wilson",
+      "specialty": "cardiology",
+      "location": "Houston, TX"
+    }
+  ]
+}

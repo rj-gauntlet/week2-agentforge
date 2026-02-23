@@ -1,0 +1,19 @@
+{
+  "pairs": [
+    {
+      "drugs": ["aspirin", "ibuprofen"],
+      "severity": "minor",
+      "description": "Increased risk of GI bleeding when combined."
+    },
+    {
+      "drugs": ["warfarin", "aspirin"],
+      "severity": "major",
+      "description": "Increased bleeding risk; avoid unless clinically indicated."
+    },
+    {
+      "drugs": ["warfarin", "ibuprofen"],
+      "severity": "major",
+      "description": "NSAIDs can increase anticoagulant effect and bleeding risk."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "coverage": [
+    { "procedure_code": "99213", "plan_id": "plan_001", "covered": true, "details": "Office visit; copay may apply." },
+    { "procedure_code": "99214", "plan_id": "plan_001", "covered": true, "details": "Office visit; prior auth not required." },
+    { "procedure_code": "99213", "plan_id": "plan_002", "covered": false, "details": "Not in network for this plan." },
+    { "procedure_code": "J0129", "plan_id": "plan_001", "covered": true, "details": "Biologic; prior auth required." }
+  ]
+}
