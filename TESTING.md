@@ -63,7 +63,7 @@ Unit tests do not need any API key.
 ## What you need to do to succeed
 
 1. **Run tests from the project root:**  
-   `cd c:\Users\rjxxl\projects\week2-agentforce` then `pytest tests/unit -v`.
+   `cd c:\Users\rjxxl\projects\week2-agentforge` then `pytest tests/unit -v`.
 
 2. **Implement one tool at a time:**  
    Start with `drug_interaction_check`: add a small JSON/CSV of known interactions (e.g. aspirin+ibuprofen → minor, warfarin+aspirin → major), load it in the tool, and return the right shape so unit tests pass.
