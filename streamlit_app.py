@@ -81,7 +81,7 @@ with st.sidebar:
 # --- MAIN CHAT INTERFACE (The ChatGPT Style) ---
 st.markdown("<h1 style='color: #00B4D8;'>AgentForge <span style='color: #9D4EDD;'>Healthcare</span></h1>", unsafe_allow_html=True)
 st.markdown("<p style='color: #B0B0B0;'>Ask me to check drug interactions, look up symptoms, find providers, or check insurance coverage!</p>", unsafe_allow_html=True)
-st.caption("📱 **Chat on the go via WhatsApp!** Text `join opposite-suit` to **+1 415 523 8886** to connect to the Sandbox.")
+st.caption("📱 **Chat on the go via WhatsApp!** Text `join opposite-suit` to **+1 415 523 8886** to connect to the AgentForge Assistant.")
 st.divider()
 
 # Display existing messages in the classic scrolling style
