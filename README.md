@@ -53,14 +53,30 @@ curl -X POST http://localhost:8000/chat -H "Content-Type: application/json" -d "
 From the project folder (no activation):
 
 ```powershell
+# Run Unit Tests
 .\.venv\Scripts\python.exe -m pytest tests/unit -v
+
+# Run Evaluation Tests (Evals)
 .\.venv\Scripts\python.exe -m pytest tests/eval -v
-.\.venv\Scripts\python.exe -m pytest
 ```
 
-If you need to change directory first: `cd c:\Users\rjxxl\projects\week2-agentforge`.
+See [TESTING.md](./TESTING.md) for TDD and detailed instructions.
 
-See [TESTING.md](./TESTING.md) for TDD and eval details.
+---
+
+## Evaluation Tests (Evals)
+
+Per the MVP requirements, this project includes a robust suite of end-to-end evaluation tests that verify the agent's ability to reason, call tools, and handle multi-step chains.
+
+**👉 Link to Evals File:** [tests/eval/test_eval_mvp.py](./tests/eval/test_eval_mvp.py)
+
+**To run the evals for your demonstration video:**
+1. Ensure your `.env` is configured with a valid API key.
+2. Run the following command from the project root:
+   ```powershell
+   .\.venv\Scripts\python.exe -m pytest tests/eval/test_eval_mvp.py -v
+   ```
+3. Watch the terminal output as the agent successfully parses medical queries, triggers the correct underlying tools (e.g., `drug_interaction_check`, `provider_search`), and synthesizes a safe response.
 
 ---
 
