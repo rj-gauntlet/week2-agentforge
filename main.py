@@ -5,8 +5,9 @@ FastAPI app for the healthcare agent. Run with:
 """
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Form, Response
 from pydantic import BaseModel, Field
+from twilio.twiml.messaging_response import MessagingResponse
 
 from agent.orchestrator import run_agent
 
@@ -88,3 +89,27 @@ def chat(request: ChatRequest):
         history=_messages_to_history(result.get("messages", [])),
         error=result.get("error"),
     )
+
+
+@app.post("/sms")
+async def sms_reply(Body: str = Form(...)):
+    """
+    Webhook for Twilio SMS and WhatsApp.
+    Twilio sends form data including `Body` (the text message).
+    Returns an XML TwiML response.
+    """
+    # Call our agent with the incoming text
+    result = run_agent(query=Body, chat_history=None)
+    
+    # Extract the agent's response or an error message
+    if result.get("error"):
+        reply_text = f"System Error: {result['error']}"
+    else:
+        reply_text = result.get("output", "I'm sorry, I encountered an error processing your request.")
+        
+    # Build the Twilio XML response
+    resp = MessagingResponse()
+    resp.message(reply_text)
+    
+    # Return raw XML so Twilio understands it
+    return Response(content=str(resp), media_type="application/xml")

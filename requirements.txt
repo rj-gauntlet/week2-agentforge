@@ -13,5 +13,9 @@ streamlit>=1.30.0
 pytest>=8.0.0
 pytest-asyncio>=0.24.0
 
+# SMS / Integrations
+twilio>=9.0.0
+python-multipart>=0.0.9
+
 # Optional: observability (add when integrating LangSmith)
 # langsmith>=0.1.0
