@@ -54,6 +54,8 @@ if "telemetry" not in st.session_state:
     st.session_state.telemetry = []
 if "turn_count" not in st.session_state:
     st.session_state.turn_count = 0
+if "active_telemetry_turn" not in st.session_state:
+    st.session_state.active_telemetry_turn = None
 
 # --- SIDEBAR (The "Left Column" merged into the standard Sidebar) ---
 with st.sidebar:
@@ -129,8 +131,10 @@ with chat_col:
         avatar_icon = ":material/person:" if msg["role"] == "user" else ":material/local_hospital:"
         with st.chat_message(msg["role"], avatar=avatar_icon):
             marker = "<span class='user-msg'></span>" if msg["role"] == "user" else "<span class='assistant-msg'></span>"
-            turn_label = f"**[Turn #{msg['turn']}]**  \n" if msg.get("turn") else ""
-            st.markdown(f"{marker}{turn_label}{msg['content']}", unsafe_allow_html=True)
+            st.markdown(f"{marker}{msg['content']}", unsafe_allow_html=True)
+            
+            if msg.get("turn") and msg["role"] == "user":
+                st.button("🔍 View Tool Telemetry", key=f"btn_tel_{msg['turn']}", help="Highlight the tool executions for this query", on_click=lambda t=msg["turn"]: st.session_state.update({"active_telemetry_turn": t}))
 
     # Determine what to run (either the user typed it, or they clicked a sidebar button)
     user_input = st.chat_input("Type your clinical query here...")
@@ -143,13 +147,15 @@ with chat_col:
     if user_input:
         st.session_state.turn_count += 1
         current_turn = st.session_state.turn_count
+        st.session_state.active_telemetry_turn = current_turn  # Auto-focus on the new turn
         
         # 1. Add to history
         st.session_state.messages.append({"role": "user", "content": user_input, "turn": current_turn})
         
         # 2. Display instantly in the chat
         with st.chat_message("user", avatar=":material/person:"):
-            st.markdown(f"<span class='user-msg'></span>**[Turn #{current_turn}]**  \n{user_input}", unsafe_allow_html=True)
+            st.markdown(f"<span class='user-msg'></span>{user_input}", unsafe_allow_html=True)
+            st.button("🔍 View Tool Telemetry", key=f"btn_tel_{current_turn}_new", disabled=True)
 
         # 3. AI response block
         with st.chat_message("assistant", avatar=":material/local_hospital:"):
@@ -185,8 +191,18 @@ with telemetry_col:
         st.info("No tools called yet. Ask the agent a clinical question!")
     else:
         for t_event in reversed(st.session_state.telemetry):
-            turn_label = f"Turn #{t_event.get('turn', '?')}"
-            with st.expander(f"**{turn_label}** | {t_event['query'][:30]}...", expanded=True):
+            turn_id = t_event.get('turn')
+            
+            # Determine if this box should be expanded/highlighted
+            is_active = (turn_id == st.session_state.active_telemetry_turn)
+            # Default to the most recent turn if none is explicitly clicked yet
+            if st.session_state.active_telemetry_turn is None and t_event == st.session_state.telemetry[-1]:
+                is_active = True
+                
+            turn_label = f"Turn #{turn_id}"
+            title = f"🟢 {turn_label} | {t_event['query'][:30]}..." if is_active else f"⚪ {turn_label} | {t_event['query'][:30]}..."
+            
+            with st.expander(title, expanded=is_active):
                 for tool in t_event["tools"]:
                     st.markdown(f"**🛠️ {tool['name']}**")
                     st.json(tool["args"])
