@@ -82,8 +82,8 @@
 
 ### Morning
 
-- [ ] **Tools 4 & 5:** Implement remaining two tools; test individually.
-- [ ] **Multi-step:** Ensure orchestrator can chain 2–3 tools when needed (e.g. search → filter → return). Add 2–3 test scenarios.
+- [x] **Tools 4 & 5:** Implement remaining two tools; test individually.
+- [x] **Multi-step:** Ensure orchestrator can chain 2–3 tools when needed (e.g. search → filter → return). Add 2–3 test scenarios.
 
 ### Afternoon
 
