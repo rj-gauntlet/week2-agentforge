@@ -3,7 +3,7 @@ import json
 from agent.orchestrator import run_agent
 
 # --- PAGE SETUP ---
-st.set_page_config(page_title="AgentForge AI", page_icon=":material/local_hospital:", layout="centered")
+st.set_page_config(page_title="AgentForge AI", page_icon=":material/local_hospital:", layout="wide")
 
 # --- CUSTOM CSS FOR DUAL-TONE COLORING ---
 st.markdown("""
@@ -50,6 +50,8 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 if "preset_query" not in st.session_state:
     st.session_state.preset_query = None
+if "telemetry" not in st.session_state:
+    st.session_state.telemetry = []
 
 # --- SIDEBAR (The "Left Column" merged into the standard Sidebar) ---
 with st.sidebar:
@@ -116,41 +118,68 @@ st.markdown("<h1 style='color: #00B4D8;'>AgentForge <span style='color: #9D4EDD;
 st.markdown("<p style='color: #B0B0B0;'>Ask me to check drug interactions, look up symptoms, find providers, or check insurance coverage!</p>", unsafe_allow_html=True)
 st.divider()
 
-# Display existing messages in the classic scrolling style
-for msg in st.session_state.messages:
-    avatar_icon = ":material/person:" if msg["role"] == "user" else ":material/local_hospital:"
-    with st.chat_message(msg["role"], avatar=avatar_icon):
-        marker = "<span class='user-msg'></span>" if msg["role"] == "user" else "<span class='assistant-msg'></span>"
-        st.markdown(f"{marker}{msg['content']}", unsafe_allow_html=True)
+# --- COMMAND CENTER LAYOUT (CHAT + TELEMETRY) ---
+chat_col, telemetry_col = st.columns([2, 1], gap="large")
 
-# Determine what to run (either the user typed it, or they clicked a sidebar button)
-user_input = st.chat_input("Type your clinical query here...")
+with chat_col:
+    # Display existing messages in the classic scrolling style
+    for msg in st.session_state.messages:
+        avatar_icon = ":material/person:" if msg["role"] == "user" else ":material/local_hospital:"
+        with st.chat_message(msg["role"], avatar=avatar_icon):
+            marker = "<span class='user-msg'></span>" if msg["role"] == "user" else "<span class='assistant-msg'></span>"
+            st.markdown(f"{marker}{msg['content']}", unsafe_allow_html=True)
 
-if st.session_state.preset_query:
-    user_input = st.session_state.preset_query
-    st.session_state.preset_query = None 
+    # Determine what to run (either the user typed it, or they clicked a sidebar button)
+    user_input = st.chat_input("Type your clinical query here...")
 
-# Execute the Agent
-if user_input:
-    # 1. Add to history
-    st.session_state.messages.append({"role": "user", "content": user_input})
-    
-    # 2. Display instantly in the chat
-    with st.chat_message("user", avatar=":material/person:"):
-        st.markdown(f"<span class='user-msg'></span>{user_input}", unsafe_allow_html=True)
+    if st.session_state.preset_query:
+        user_input = st.session_state.preset_query
+        st.session_state.preset_query = None 
 
-    # 3. AI response block
-    with st.chat_message("assistant", avatar=":material/local_hospital:"):
-        with st.spinner("Accessing clinical databases..."):
-            history_for_agent = st.session_state.messages[:-1]
-            try:
-                result = run_agent(query=user_input, chat_history=history_for_agent)
-                ai_response = result.get("output", "Error processing.")
-            except Exception as e:
-                ai_response = f"System Error: {str(e)}"
-            st.markdown(f"<span class='assistant-msg'></span>{ai_response}", unsafe_allow_html=True)
+    # Execute the Agent
+    if user_input:
+        # 1. Add to history
+        st.session_state.messages.append({"role": "user", "content": user_input})
         
-    # 4. Save response to history and optionally refresh if a button was clicked
-    st.session_state.messages.append({"role": "assistant", "content": ai_response})
-    if not user_input:  # If it came from a button, sometimes a rerun helps clear state cleanly
+        # 2. Display instantly in the chat
+        with st.chat_message("user", avatar=":material/person:"):
+            st.markdown(f"<span class='user-msg'></span>{user_input}", unsafe_allow_html=True)
+
+        # 3. AI response block
+        with st.chat_message("assistant", avatar=":material/local_hospital:"):
+            with st.spinner("Accessing clinical databases..."):
+                history_for_agent = st.session_state.messages[:-1]
+                try:
+                    result = run_agent(query=user_input, chat_history=history_for_agent)
+                    ai_response = result.get("output", "Error processing.")
+                    
+                    # --- TELEMETRY EXTRACTION ---
+                    tools_used = []
+                    for m in result.get("messages", []):
+                        if hasattr(m, "tool_calls") and m.tool_calls:
+                            for tc in m.tool_calls:
+                                tools_used.append({"name": tc["name"], "args": tc["args"]})
+                    if tools_used:
+                        st.session_state.telemetry.append({"query": user_input, "tools": tools_used})
+                        
+                except Exception as e:
+                    ai_response = f"System Error: {str(e)}"
+                st.markdown(f"<span class='assistant-msg'></span>{ai_response}", unsafe_allow_html=True)
+            
+        # 4. Save response to history and force a UI refresh
+        st.session_state.messages.append({"role": "assistant", "content": ai_response})
         st.rerun()
+
+with telemetry_col:
+    st.markdown("<h3 style='color: #9D4EDD;'>📡 Live Telemetry</h3>", unsafe_allow_html=True)
+    st.caption("Monitoring Agent Tool Execution")
+    st.divider()
+    
+    if not st.session_state.telemetry:
+        st.info("No tools called yet. Ask the agent a clinical question!")
+    else:
+        for t_event in reversed(st.session_state.telemetry):
+            with st.expander(f"Query: '{t_event['query'][:30]}...'", expanded=True):
+                for tool in t_event["tools"]:
+                    st.markdown(f"**🛠️ {tool['name']}**")
+                    st.json(tool["args"])
