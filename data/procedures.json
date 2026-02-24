@@ -1,0 +1,29 @@
+{
+  "procedures": [
+    {
+      "code": "27447",
+      "name": "Knee Replacement",
+      "description": "Total knee arthroplasty."
+    },
+    {
+      "code": "99213",
+      "name": "Office Visit",
+      "description": "Office or other outpatient visit for the evaluation and management of an established patient."
+    },
+    {
+      "code": "93000",
+      "name": "Electrocardiogram (ECG)",
+      "description": "Routine ECG with at least 12 leads."
+    },
+    {
+      "code": "70450",
+      "name": "CT Scan Head",
+      "description": "Computed tomography, head or brain; without contrast material."
+    },
+    {
+      "code": "80053",
+      "name": "Comprehensive Metabolic Panel (CMP)",
+      "description": "Blood test that measures 14 different substances."
+    }
+  ]
+}

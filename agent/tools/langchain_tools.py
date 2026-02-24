@@ -13,6 +13,7 @@ from agent.tools import (
     appointment_availability,
     insurance_coverage_check,
 )
+from agent.tools.procedure_lookup import procedure_lookup
 
 
 def _result_to_string(result: dict) -> str:
@@ -47,6 +48,11 @@ def _insurance_coverage_invoke(procedure_code: str, plan_id: str) -> str:
     return _result_to_string(out)
 
 
+def _procedure_lookup_invoke(query: str) -> str:
+    out = procedure_lookup(query=query)
+    return _result_to_string(out)
+
+
 # LangChain tools with descriptions and schemas for the LLM
 drug_interaction_tool = StructuredTool.from_function(
     func=_drug_interaction_invoke,
@@ -78,6 +84,11 @@ insurance_coverage_tool = StructuredTool.from_function(
     description="Check if a procedure is covered under an insurance plan. Input: procedure_code (e.g. 99213) and plan_id (e.g. plan_001). Returns covered (true/false) and details.",
 )
 
+procedure_lookup_tool = StructuredTool.from_function(
+    func=_procedure_lookup_invoke,
+    name="procedure_lookup",
+    description="Search for a medical procedure by name to get its CPT code, or search by CPT code to get its name. Input: query (e.g., 'Knee Replacement' or '27447').",
+)
 
 def get_langchain_tools():
     """Return list of LangChain tools for the agent."""
@@ -87,4 +98,5 @@ def get_langchain_tools():
         provider_search_tool,
         appointment_availability_tool,
         insurance_coverage_tool,
+        procedure_lookup_tool,
     ]

@@ -20,14 +20,14 @@
   },
   {
     "category": "happy_path",
-    "query": "Any open slots for prov_001 next week?",
+    "query": "Any open slots for prov_001 on 2025-03-01?",
     "expected_tools": ["appointment_availability"],
-    "expected_output_contains": ["2025-03-01", "09:00"]
+    "expected_output_contains": ["09:00"]
   },
   {
-    "category": "happy_path",
+    "category": "multi_step",
     "query": "Does plan plan_001 cover a knee replacement?",
-    "expected_tools": ["insurance_coverage_check"],
+    "expected_tools": ["procedure_lookup", "insurance_coverage_check"],
     "expected_output_contains": ["not covered"]
   },
   {
@@ -76,8 +76,8 @@
   {
     "category": "edge_case",
     "query": "Find me a wizard in space.",
-    "expected_tools": ["provider_search"],
-    "expected_output_contains": ["no providers"]
+    "expected_tools": [],
+    "expected_output_contains": ["healthcare", "medical", "clinical"]
   },
   {
     "category": "edge_case",
