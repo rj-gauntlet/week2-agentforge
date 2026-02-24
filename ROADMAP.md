@@ -92,7 +92,7 @@
 
 ### Evening
 
-- [ ] **Smoke test:** Run 5+ evals with tracing on; confirm traces appear in LangSmith.
+- [x] **Smoke test:** Run 5+ evals with tracing on; confirm traces appear in LangSmith.
 
 ---
 
