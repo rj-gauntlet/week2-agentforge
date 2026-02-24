@@ -78,9 +78,31 @@ with st.sidebar:
     if st.button("Verify Insurance", icon=":material/health_and_safety:", use_container_width=True):
         st.session_state.preset_query = "Does plan plan_001 cover procedure 99213?"
 
-    # Spacer to push the HIPAA warning to the bottom
-    st.markdown("<div style='min-height: 35vh;'></div>", unsafe_allow_html=True)
-    st.warning("⚠️ **Notice:** All queries are logged for HIPAA compliance. Do not enter PHI.")
+    # Pin HIPAA warning to the absolute bottom of the sidebar without causing scrollbars
+    st.markdown("""
+        <style>
+        [data-testid="stSidebarUserContent"] {
+            padding-bottom: 6rem;
+            position: relative;
+        }
+        .hipaa-warning-box {
+            position: absolute;
+            bottom: 2rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            background-color: rgba(255, 171, 0, 0.15);
+            border: 1px solid rgba(255, 171, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: #FFB74D;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+        </style>
+        <div class="hipaa-warning-box">
+            ⚠️ <b>Notice:</b> All queries are logged for HIPAA compliance. Do not enter PHI.
+        </div>
+    """, unsafe_allow_html=True)
 
 # --- MAIN CHAT INTERFACE (The ChatGPT Style) ---
 st.markdown("<h1 style='color: #00B4D8;'>AgentForge <span style='color: #9D4EDD;'>Healthcare</span></h1>", unsafe_allow_html=True)
