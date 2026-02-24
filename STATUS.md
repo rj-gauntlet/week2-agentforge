@@ -39,6 +39,7 @@
 
 - **Day 2:** Multi-step tool chaining (orchestrator can already use multiple tools in one turn), observability (LangSmith etc.), latency/token logging.
 - **Final Submission:** Voice Assistant implementation (via Twilio Voice or Web Speech API), Agent Architecture Doc, demo video, submission.
+  - **IMPORTANT TODO:** Check if the Twilio `+18447342479` number has been approved for Toll-Free verification so it can be swapped out from the Sandbox number before final submission!
 
 ---
 
