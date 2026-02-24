@@ -48,3 +48,4 @@
 1. **Deploy** — Get the FastAPI app on Railway, Render, or Modal with a public URL; set `OPENAI_API_KEY` (or `ANTHROPIC_API_KEY`) in the platform’s env.
 2. **Smoke test** — Hit the deployed `/health` and `/chat` once; confirm MVP checklist against the live URL.
 3. **Day 2** — Add observability (e.g. LangSmith), then expand evals and verification per ROADMAP.
+4. **Stretch Goal:** Integrate a live external API (e.g., RxNorm/FDA) for the `drug_interaction_check` tool instead of relying solely on mock data.

@@ -5,6 +5,8 @@ TDD: make tests in tests/unit/test_drug_interaction_check.py pass.
 """
 import json
 import os
+import urllib.request
+import urllib.parse
 
 from agent.tools.schemas import tool_result
 
@@ -12,7 +14,6 @@ from agent.tools.schemas import tool_result
 _DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "drug_interactions.json")
 
 _severity_order = ("none", "minor", "major", "contraindicated")
-
 
 def _load_dataset():
     """Load and return the curated drug-interaction pairs. Cached in memory."""
@@ -22,13 +23,11 @@ def _load_dataset():
         data = json.load(f)
     return data.get("pairs", [])
 
-
 def _normalize(name):
     """Normalize medication name for lookup (lowercase, strip)."""
     if not name or not isinstance(name, str):
         return ""
     return name.strip().lower()
-
 
 def _pair_key(drug_a, drug_b):
     """Order-independent key for a drug pair."""
@@ -37,10 +36,31 @@ def _pair_key(drug_a, drug_b):
         return (a, b)
     return (b, a)
 
+def _check_fda_api(drug_a, drug_b):
+    """
+    Check the live openFDA API for interactions between two drugs.
+    Returns (severity, description) if found, else None.
+    """
+    query = f'drug_interactions:"{drug_a}" AND drug_interactions:"{drug_b}"'
+    url = f'https://api.fda.gov/drug/label.json?search={urllib.parse.quote(query)}&limit=1'
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=3.0) as response:
+            data = json.loads(response.read().decode())
+            if 'results' in data and len(data['results']) > 0 and 'drug_interactions' in data['results'][0]:
+                description = data['results'][0]['drug_interactions'][0]
+                # Keep the description somewhat brief
+                if len(description) > 400:
+                    description = description[:397] + "..."
+                # If they are flagged together on an FDA label, we consider it a major interaction
+                return "major", f"(Source: Live openFDA API) {description}"
+    except Exception:
+        pass # Fallback to local dataset on any network error or 404
+    return None
 
 def _lookup_interactions(medications):
     """
-    Look up all pairs in the medication list against the dataset.
+    Look up all pairs in the medication list against the dataset/live API.
     Returns (list of interaction dicts, overall severity).
     """
     pairs_data = _load_dataset()
@@ -60,19 +80,32 @@ def _lookup_interactions(medications):
     if len(meds) < 2:
         return [], "none"
 
-    for i in range(len(medications)):
-        for j in range(i + 1, len(medications)):
-            key = _pair_key(medications[i], medications[j])
-            if key in lookup:
+    for i in range(len(meds)):
+        for j in range(i + 1, len(meds)):
+            d1, d2 = meds[i], meds[j]
+            key = _pair_key(d1, d2)
+            
+            # 1. Try Live FDA API first!
+            api_result = _check_fda_api(d1, d2)
+            
+            if api_result:
+                interactions.append({
+                    "drugs": [d1, d2],
+                    "severity": api_result[0],
+                    "description": api_result[1],
+                })
+            # 2. Fallback to Local Dataset if API fails or returns 404
+            elif key in lookup:
                 info = lookup[key]
                 interactions.append({
-                    "drugs": [medications[i], medications[j]],
+                    "drugs": [d1, d2],
                     "severity": info["severity"],
-                    "description": info["description"],
+                    "description": f"(Source: Local Database) {info['description']}",
                 })
 
     if not interactions:
         return [], "none"
+        
     # Overall severity = max severity among interactions
     severities = [s["severity"] for s in interactions]
     overall = "none"
