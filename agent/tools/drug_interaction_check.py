@@ -128,7 +128,12 @@ def drug_interaction_check(medications):
     if len(medications) == 0:
         return tool_result(
             success=True,
-            data={"interactions": [], "severity": "none"},
+            data={
+            "interactions": [], 
+            "severity": "none",
+            "can_diagnose": False,
+            "requires_provider_consultation": True
+        },
         )
 
     interactions, severity = _lookup_interactions(medications)
@@ -137,5 +142,7 @@ def drug_interaction_check(medications):
         data={
             "interactions": interactions,
             "severity": severity,
+            "can_diagnose": False,
+            "requires_provider_consultation": True
         },
     )

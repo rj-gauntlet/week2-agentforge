@@ -68,5 +68,7 @@ def symptom_lookup(symptoms=None):
         data={
             "possible_conditions": unique if unique else ["No matching information in lookup; consult a provider."],
             "urgency": max_urgency,
+            "can_diagnose": False,
+            "requires_provider_consultation": True
         },
     )
