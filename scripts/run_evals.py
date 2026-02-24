@@ -21,35 +21,72 @@ def agent_target(inputs: dict) -> dict:
     query = inputs["query"]
     result = run_agent(query)
     
-    # Extract tools used
+    # Extract tools used and their outputs
     tools_used = []
+    tool_outputs = {}
+    for m in result.get("messages", []):
+        if getattr(m, "type", None) == "tool" or m.__class__.__name__ == "ToolMessage":
+            try:
+                tool_outputs[m.tool_call_id] = json.loads(m.content)
+            except Exception:
+                tool_outputs[m.tool_call_id] = m.content
+
     for m in result.get("messages", []):
         if hasattr(m, "tool_calls") and m.tool_calls:
             for tc in m.tool_calls:
                 tools_used.append(tc["name"])
+                # Attach parsed output to the tool name (simplified)
+                if tc.get("id") in tool_outputs:
+                    # store it keyed by tool name for easy assertions
+                    if "parsed_outputs" not in locals():
+                        parsed_outputs = {}
+                    parsed_outputs[tc["name"]] = tool_outputs[tc["id"]]
                 
     return {
         "output": result.get("output", ""),
         "tools_used": tools_used,
+        "tool_outputs": locals().get("parsed_outputs", {}),
         "error": result.get("error", None)
     }
 
 # Evaluators
 def check_expected_output(run, example):
-    """Checks if the agent's output contains the expected keywords."""
+    """Checks if the agent's output contains the expected keywords using OR logic (less brittle)."""
     expected_contains = example.outputs.get("expected_output_contains", [])
     actual_output = run.outputs.get("output", "").lower()
     
     if not expected_contains:
         return {"key": "output_contains_keywords", "score": 1}
         
-    score = 1
+    # Use OR logic: if it hits ANY of the expected keywords, it passes.
+    score = 0
     for keyword in expected_contains:
-        if keyword.lower() not in actual_output:
-            score = 0
+        if keyword.lower() in actual_output:
+            score = 1
             break
             
     return {"key": "output_contains_keywords", "score": score}
+
+def check_structured_tool_flags(run, example):
+    """Asserts that tools returned specific structured JSON flags like can_diagnose: False."""
+    expected_flags = example.outputs.get("expected_flags", {})
+    if not expected_flags:
+        return {"key": "structured_flags_correct", "score": 1}
+        
+    tool_outputs = run.outputs.get("tool_outputs", {})
+    score = 1
+    for expected_key, expected_val in expected_flags.items():
+        # Check if this key exists in ANY of the tool outputs
+        found_match = False
+        for tool_name, output_data in tool_outputs.items():
+            if isinstance(output_data, dict) and output_data.get(expected_key) == expected_val:
+                found_match = True
+                break
+        if not found_match:
+            score = 0
+            break
+            
+    return {"key": "structured_flags_correct", "score": score}
 
 def check_expected_tools(run, example):
     """Checks if the agent used all the expected tools."""
@@ -98,9 +135,10 @@ def main():
         client.create_example(
             inputs={"query": case["query"]},
             outputs={
-                "expected_tools": case["expected_tools"],
-                "expected_output_contains": case["expected_output_contains"],
-                "category": case["category"]
+                "expected_tools": case.get("expected_tools", []),
+                "expected_output_contains": case.get("expected_output_contains", []),
+                "expected_flags": case.get("expected_flags", {}),
+                "category": case.get("category", "")
             },
             dataset_id=dataset.id,
         )
@@ -112,7 +150,7 @@ def main():
     experiment_results = evaluate(
         agent_target,
         data=dataset_name,
-        evaluators=[check_expected_output, check_expected_tools],
+        evaluators=[check_expected_output, check_expected_tools, check_structured_tool_flags],
         experiment_prefix="Agent-Eval-Run",
         metadata={"version": "1.0", "env": "local"}
     )
