@@ -78,18 +78,25 @@ with st.sidebar:
     if st.button("Verify Insurance", icon=":material/health_and_safety:", use_container_width=True):
         st.session_state.preset_query = "Does plan plan_001 cover procedure 99213?"
 
-    # Pin HIPAA warning to the absolute bottom of the sidebar without causing scrollbars
+    # Pin HIPAA warning to the bottom of the sidebar dynamically
     st.markdown("""
         <style>
+        /* Force the sidebar to behave like a full-height flex column */
+        [data-testid="stSidebar"] > div:first-child {
+            display: flex;
+            flex-direction: column;
+        }
         [data-testid="stSidebarUserContent"] {
-            padding-bottom: 6rem;
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        /* Push the warning box to the absolute bottom of the available space */
+        div.element-container:has(.hipaa-warning-box) {
+            margin-top: auto;
+            margin-bottom: 1.5rem; /* Aligns with the bottom text input bar */
         }
         .hipaa-warning-box {
-            position: absolute;
-            bottom: 2rem;
-            left: 1.5rem;
-            right: 1.5rem;
             background-color: rgba(255, 171, 0, 0.15);
             border: 1px solid rgba(255, 171, 0, 0.3);
             border-radius: 0.5rem;
