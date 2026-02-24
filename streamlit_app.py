@@ -188,10 +188,32 @@ with chat_col:
                     
                     # --- TELEMETRY EXTRACTION ---
                     tools_used = []
+                    # Map tool outputs by tool_call_id
+                    tool_outputs = {}
+                    for m in result.get("messages", []):
+                        if getattr(m, "type", None) == "tool" or m.__class__.__name__ == "ToolMessage":
+                            tool_outputs[m.tool_call_id] = m.content
+
                     for m in result.get("messages", []):
                         if hasattr(m, "tool_calls") and m.tool_calls:
                             for tc in m.tool_calls:
-                                tools_used.append({"name": tc["name"], "args": tc["args"]})
+                                tc_id = tc.get("id")
+                                raw_output = tool_outputs.get(tc_id, "No output recorded.")
+                                
+                                # Try to parse as JSON for cleaner display, otherwise keep as string
+                                parsed_output = raw_output
+                                try:
+                                    import json
+                                    parsed_output = json.loads(raw_output)
+                                except Exception:
+                                    pass
+                                    
+                                tools_used.append({
+                                    "name": tc["name"], 
+                                    "args": tc["args"],
+                                    "output": parsed_output
+                                })
+                                
                     if tools_used:
                         st.session_state.telemetry.append({"turn": current_turn, "query": user_input, "tools": tools_used})
                         
@@ -226,4 +248,12 @@ with telemetry_col:
             with st.expander(title, expanded=is_active):
                 for tool in t_event["tools"]:
                     st.markdown(f"**🛠️ {tool['name']}**")
+                    st.caption("Inputs")
                     st.json(tool["args"])
+                    if "output" in tool:
+                        st.caption("Outputs")
+                        if isinstance(tool["output"], (dict, list)):
+                            st.json(tool["output"])
+                        else:
+                            st.info(tool["output"])
+                    st.divider()
