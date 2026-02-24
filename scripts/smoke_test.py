@@ -9,9 +9,19 @@ Exits 0 if all checks pass, 1 otherwise.
 """
 import json
 import os
+import ssl
 import sys
 import urllib.error
 import urllib.request
+
+
+def _ssl_context():
+    """Use certifi CA bundle if available (fixes SSL verify on some Windows/Python setups)."""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
 
 
 def main() -> int:
@@ -20,10 +30,12 @@ def main() -> int:
     print(f"Smoke testing: {base}")
     failed = 0
 
+    ctx = _ssl_context()
+
     # 1. GET /health
     try:
         req = urllib.request.Request(f"{base}/health", method="GET")
-        with urllib.request.urlopen(req, timeout=10) as r:
+        with urllib.request.urlopen(req, timeout=10, context=ctx) as r:
             data = json.loads(r.read().decode())
             if data.get("status") == "ok":
                 print("  GET /health  OK")
@@ -43,7 +55,7 @@ def main() -> int:
             method="POST",
             headers={"Content-Type": "application/json"},
         )
-        with urllib.request.urlopen(req, timeout=60) as r:
+        with urllib.request.urlopen(req, timeout=60, context=ctx) as r:
             data = json.loads(r.read().decode())
             out = (data.get("output") or "").strip()
             err = data.get("error")

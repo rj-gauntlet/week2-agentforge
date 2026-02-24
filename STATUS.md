@@ -17,9 +17,9 @@
 | 6 | Basic error handling | ✅ Done | try/except in `run_agent`; API returns 500 with detail on failure. |
 | 7 | ≥1 verification | ✅ Done | System prompt: no diagnosis, “consult your provider,” cite tool. |
 | 8 | 5+ test cases | ✅ Done | 5 eval cases + unit/integration; all 32 tests pass. |
-| 9 | **Deployed and publicly accessible** | ❌ **Not done** | App runs locally only; no public URL yet. |
+| 9 | **Deployed and publicly accessible** | ✅ Done | Live at https://web-production-0f3ae.up.railway.app; smoke test passed. |
 
-**MVP gap:** **Deploy** to Railway / Render / Modal / etc. and get a **public URL**, then run a smoke test against it.
+**MVP:** All 9 requirements complete.
 
 ---
 
@@ -32,7 +32,7 @@
 ### Day 1 — MVP (mostly done)
 
 - **Done:** Stack (Python/FastAPI), 5 tools, orchestrator, conversation history, error handling, verification (prompt), 5+ evals, local API.
-- **Not done:** Deploy to cloud, public URL, smoke test on deployed app.
+- **Done:** Deployed to Railway; public URL; smoke test passed.
 - **Note:** Repo is standalone (week2-agentforge); PRD also mentions forking OpenEMR. If the gate requires a fork, you’d add this agent as a feature in an OpenEMR fork; otherwise the current repo may satisfy “agent with tool use.”
 
 ### Day 2+ — Not started

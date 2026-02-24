@@ -68,11 +68,11 @@
 ### Evening — Eval + deploy
 
 - [x] **Simple evaluation:** 5+ test cases with expected outcomes (input, expected tool call/result, pass/fail). Run and record results.
-- [ ] **Deploy:** Deploy to Vercel / Railway / Modal / cloud. Public URL.
-- [ ] **Smoke test:** Run MVP checklist from PRD against deployed app.
+- [x] **Deploy:** Deploy to Vercel / Railway / Modal / cloud. Public URL.
+- [x] **Smoke test:** Run MVP checklist from PRD against deployed app.
 
 **MVP gate checklist (all required):**  
-☑ Natural language in domain ☑ ≥3 tools ☑ Structured tool results ☑ Synthesis of results ☑ Conversation history ☑ Basic error handling ☑ ≥1 verification ☑ 5+ test cases ☐ Deployed & public
+☑ Natural language in domain ☑ ≥3 tools ☑ Structured tool results ☑ Synthesis of results ☑ Conversation history ☑ Basic error handling ☑ ≥1 verification ☑ 5+ test cases ☑ Deployed & public
 
 ---
 

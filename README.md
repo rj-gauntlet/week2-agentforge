@@ -33,7 +33,7 @@ If port 8000 is in use (e.g. “only one usage of each socket address”), use a
 
 If you need to change directory first: `cd c:\Users\rjxxl\projects\week2-agentforge` then run the line above.
 
-- **Deploy:** See **[DEPLOY.md](DEPLOY.md)** for Railway (or Render) and the **smoke test** (`scripts/smoke_test.py <your-public-url>`).
+- **Deploy:** See **[DEPLOY.md](DEPLOY.md)**. Live API: **https://web-production-0f3ae.up.railway.app** (health: `/health`, chat: `POST /chat`).
 
 - **Health:** `GET http://localhost:8000/health`
 - **Chat:** `POST http://localhost:8000/chat` with JSON body:
