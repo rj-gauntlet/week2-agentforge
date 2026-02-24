@@ -87,3 +87,18 @@ Use the venv’s Python (no activation):
 .\.venv\Scripts\python.exe -m pytest -m "not eval"      # skip eval
 .\.venv\Scripts\python.exe -m pytest --tb=long         # full tracebacks
 ```
+
+---
+
+## LangSmith Evaluation Harness (Day 3+)
+
+To run bulk evaluation test cases directly against your agent and record the results, scores, and traces in your LangSmith dashboard, use the dedicated Eval script:
+
+1. Ensure `LANGCHAIN_API_KEY` is set in your `.env` file.
+2. Edit or add test cases in `data/eval_cases.json`. These include happy path, edge cases, multi-step, and adversarial scenarios.
+3. Run the evaluation script:
+   ```powershell
+   .\.venv\Scripts\python.exe scripts/run_evals.py
+   ```
+
+This will automatically create/sync an "AgentForge Healthcare Evals" dataset in your LangSmith workspace, run the agent against every case, evaluate if it used the correct tools and provided the expected output, and generate a graded report in the dashboard.
