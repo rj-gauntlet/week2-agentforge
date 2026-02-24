@@ -52,6 +52,8 @@ if "preset_query" not in st.session_state:
     st.session_state.preset_query = None
 if "telemetry" not in st.session_state:
     st.session_state.telemetry = []
+if "turn_count" not in st.session_state:
+    st.session_state.turn_count = 0
 
 # --- SIDEBAR (The "Left Column" merged into the standard Sidebar) ---
 with st.sidebar:
@@ -127,7 +129,8 @@ with chat_col:
         avatar_icon = ":material/person:" if msg["role"] == "user" else ":material/local_hospital:"
         with st.chat_message(msg["role"], avatar=avatar_icon):
             marker = "<span class='user-msg'></span>" if msg["role"] == "user" else "<span class='assistant-msg'></span>"
-            st.markdown(f"{marker}{msg['content']}", unsafe_allow_html=True)
+            turn_label = f"**[Turn #{msg['turn']}]**  \n" if msg.get("turn") else ""
+            st.markdown(f"{marker}{turn_label}{msg['content']}", unsafe_allow_html=True)
 
     # Determine what to run (either the user typed it, or they clicked a sidebar button)
     user_input = st.chat_input("Type your clinical query here...")
@@ -138,12 +141,15 @@ with chat_col:
 
     # Execute the Agent
     if user_input:
+        st.session_state.turn_count += 1
+        current_turn = st.session_state.turn_count
+        
         # 1. Add to history
-        st.session_state.messages.append({"role": "user", "content": user_input})
+        st.session_state.messages.append({"role": "user", "content": user_input, "turn": current_turn})
         
         # 2. Display instantly in the chat
         with st.chat_message("user", avatar=":material/person:"):
-            st.markdown(f"<span class='user-msg'></span>{user_input}", unsafe_allow_html=True)
+            st.markdown(f"<span class='user-msg'></span>**[Turn #{current_turn}]**  \n{user_input}", unsafe_allow_html=True)
 
         # 3. AI response block
         with st.chat_message("assistant", avatar=":material/local_hospital:"):
@@ -160,7 +166,7 @@ with chat_col:
                             for tc in m.tool_calls:
                                 tools_used.append({"name": tc["name"], "args": tc["args"]})
                     if tools_used:
-                        st.session_state.telemetry.append({"query": user_input, "tools": tools_used})
+                        st.session_state.telemetry.append({"turn": current_turn, "query": user_input, "tools": tools_used})
                         
                 except Exception as e:
                     ai_response = f"System Error: {str(e)}"
@@ -179,7 +185,8 @@ with telemetry_col:
         st.info("No tools called yet. Ask the agent a clinical question!")
     else:
         for t_event in reversed(st.session_state.telemetry):
-            with st.expander(f"Query: '{t_event['query'][:30]}...'", expanded=True):
+            turn_label = f"Turn #{t_event.get('turn', '?')}"
+            with st.expander(f"**{turn_label}** | {t_event['query'][:30]}...", expanded=True):
                 for tool in t_event["tools"]:
                     st.markdown(f"**🛠️ {tool['name']}**")
                     st.json(tool["args"])
