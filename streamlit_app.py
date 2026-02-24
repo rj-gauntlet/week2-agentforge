@@ -42,6 +42,27 @@ st.markdown("""
     div[data-testid="stChatMessage"]:has(.user-msg) div[data-testid="stMarkdownContainer"] {
         text-align: right;
     }
+
+    /* --- SUBTLE TELEMETRY BUTTON --- */
+    div[data-testid="stChatMessage"]:has(.user-msg) div.stButton {
+        display: flex;
+        justify-content: flex-end; /* Align the button to the right */
+        margin-top: -10px; /* Pull it slightly closer to the text */
+    }
+    div[data-testid="stChatMessage"]:has(.user-msg) div.stButton > button {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: rgba(255, 255, 255, 0.3) !important;
+        padding: 0px !important;
+        min-height: auto !important;
+        height: auto !important;
+        font-size: 1.2rem;
+    }
+    div[data-testid="stChatMessage"]:has(.user-msg) div.stButton > button:hover {
+        color: #00B4D8 !important; /* Glows cyan on hover */
+        background-color: transparent !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -134,7 +155,7 @@ with chat_col:
             st.markdown(f"{marker}{msg['content']}", unsafe_allow_html=True)
             
             if msg.get("turn") and msg["role"] == "user":
-                st.button("🔍 View Tool Telemetry", key=f"btn_tel_{msg['turn']}", help="Highlight the tool executions for this query", on_click=lambda t=msg["turn"]: st.session_state.update({"active_telemetry_turn": t}))
+                st.button("🔍", key=f"btn_tel_{msg['turn']}", help="Highlight the tool executions for this query", on_click=lambda t=msg["turn"]: st.session_state.update({"active_telemetry_turn": t}))
 
     # Determine what to run (either the user typed it, or they clicked a sidebar button)
     user_input = st.chat_input("Type your clinical query here...")
@@ -155,7 +176,7 @@ with chat_col:
         # 2. Display instantly in the chat
         with st.chat_message("user", avatar=":material/person:"):
             st.markdown(f"<span class='user-msg'></span>{user_input}", unsafe_allow_html=True)
-            st.button("🔍 View Tool Telemetry", key=f"btn_tel_{current_turn}_new", disabled=True)
+            st.button("🔍", key=f"btn_tel_{current_turn}_new", disabled=True, help="Processing...")
 
         # 3. AI response block
         with st.chat_message("assistant", avatar=":material/local_hospital:"):
