@@ -87,14 +87,12 @@
 
 ### Afternoon
 
-- [ ] **Observability:** Integrate chosen tool (LangSmith, Braintrust, etc.): trace logging (input → reasoning → tool calls → output).
-- [ ] **Latency:** Log or export LLM time, tool time, total response time.
-- [ ] **Errors:** Capture failures with context (and stack trace where useful).
+- [x] **Observability:** Integrate LangSmith: trace logging (input → reasoning → tool calls → output). Set `LANGCHAIN_TRACING_V2=true` and `LANGCHAIN_API_KEY`; see [LANGSMITH.md](./LANGSMITH.md).
+- [x] **Latency / Token usage / Errors:** LangSmith dashboard shows per-step latency, token usage, and errors with context.
 
 ### Evening
 
-- [ ] **Token usage:** Log input/output tokens per request (and cost if API supports).
-- [ ] **Smoke test:** Run 5+ evals again; confirm traces appear in observability.
+- [ ] **Smoke test:** Run 5+ evals with tracing on; confirm traces appear in LangSmith.
 
 ---
 

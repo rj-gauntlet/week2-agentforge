@@ -17,5 +17,5 @@ pytest-asyncio>=0.24.0
 twilio>=9.0.0
 python-multipart>=0.0.9
 
-# Optional: observability (add when integrating LangSmith)
-# langsmith>=0.1.0
+# Observability (Day 2+)
+langsmith>=0.2.0
