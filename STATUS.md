@@ -17,9 +17,9 @@
 | 6 | Basic error handling | ✅ Done | try/except in `run_agent`; API returns 500 with detail on failure. |
 | 7 | ≥1 verification | ✅ Done | System prompt: no diagnosis, “consult your provider,” cite tool. |
 | 8 | 5+ test cases | ✅ Done | 5 eval cases + unit/integration; all 32 tests pass. |
-| 9 | **Deployed and publicly accessible** | ✅ Done | Live at https://web-production-0f3ae.up.railway.app; smoke test passed. |
+| 9 | **Deployed and publicly accessible** | ✅ Done | API Live on Railway. Custom Web UI on Streamlit Cloud. WhatsApp/SMS via Twilio. |
 
-**MVP:** All 9 requirements complete.
+**MVP:** All 9 requirements complete! Plus multiple advanced user interfaces deployed.
 
 ---
 
@@ -29,17 +29,16 @@
 
 - PRE_SEARCH.md done; domain Healthcare (OpenEMR); LangChain; tools and observability decided.
 
-### Day 1 — MVP (mostly done)
+### Day 1 — MVP (mostly done) ✅
 
 - **Done:** Stack (Python/FastAPI), 5 tools, orchestrator, conversation history, error handling, verification (prompt), 5+ evals, local API.
 - **Done:** Deployed to Railway; public URL; smoke test passed.
-- **Note:** Repo is standalone (week2-agentforge); PRD also mentions forking OpenEMR. If the gate requires a fork, you’d add this agent as a feature in an OpenEMR fork; otherwise the current repo may satisfy “agent with tool use.”
+- **Done:** Front-End UIs Built: Streamlit Chat Interface and WhatsApp/SMS Twilio Bot.
 
 ### Day 2+ — Not started
 
 - **Day 2:** Multi-step tool chaining (orchestrator can already use multiple tools in one turn), observability (LangSmith etc.), latency/token logging.
-- **Day 3–4:** Eval framework growth to 50+ cases, adversarial/edge cases, observability dashboard, 3+ verification types.
-- **Day 5–7:** Verification polish, performance targets, open source contribution, Agent Architecture Doc, AI Cost Analysis, demo video, submission.
+- **Final Submission:** Voice Assistant implementation (via Twilio Voice or Web Speech API), Agent Architecture Doc, demo video, submission.
 
 ---
 
