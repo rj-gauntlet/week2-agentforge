@@ -44,6 +44,11 @@ st.markdown("""
     }
 
     /* --- SUBTLE TELEMETRY BUTTON --- */
+    div[data-testid="stChatMessage"]:has(.user-msg) [data-testid="stElementContainer"]:has(div.stButton) {
+        display: flex;
+        justify-content: flex-end; /* Align the container to the right */
+        width: 100%;
+    }
     div[data-testid="stChatMessage"]:has(.user-msg) div.stButton {
         display: flex;
         justify-content: flex-end; /* Align the button to the right */
@@ -233,7 +238,7 @@ with telemetry_col:
     if not st.session_state.telemetry:
         st.info("No tools called yet. Ask the agent a clinical question!")
     else:
-        for t_event in reversed(st.session_state.telemetry):
+        for t_event in st.session_state.telemetry:
             turn_id = t_event.get('turn')
             
             # Determine if this box should be expanded/highlighted
