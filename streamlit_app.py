@@ -78,7 +78,8 @@ with st.sidebar:
     if st.button("Verify Insurance", icon=":material/health_and_safety:", use_container_width=True):
         st.session_state.preset_query = "Does plan plan_001 cover procedure 99213?"
 
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    # Spacer to push the HIPAA warning to the bottom
+    st.markdown("<div style='min-height: 35vh;'></div>", unsafe_allow_html=True)
     st.warning("⚠️ **Notice:** All queries are logged for HIPAA compliance. Do not enter PHI.")
 
 # --- MAIN CHAT INTERFACE (The ChatGPT Style) ---
