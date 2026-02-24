@@ -14,4 +14,4 @@ jobs:
       - name: Ping Streamlit URL
         run: |
           # Replace the URL below with your actual Streamlit Community Cloud URL
-          curl -s -o /dev/null -w "%{http_code}" https://your-app-url.streamlit.app/
+          curl -s -o /dev/null -w "%{http_code}" https://agentforge-healthcare.streamlit.app/
