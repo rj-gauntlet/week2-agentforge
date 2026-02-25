@@ -318,9 +318,16 @@ st.markdown("<p style='color: #888888; font-size: 1.1em;'>Ask me to check drug i
 st.divider()
 
 # --- COMMAND CENTER LAYOUT (CHAT + TELEMETRY) ---
-chat_col, telemetry_col = st.columns([2, 1], gap="large")
+if st.session_state.get("show_telemetry", True):
+    chat_col, telemetry_col = st.columns([2, 1], gap="large")
+else:
+    chat_col = st.container()
+    telemetry_col = None
 
 with chat_col:
+    if not st.session_state.get("show_telemetry", True):
+        st.button("📡 Open Live Telemetry", help="Show the agent execution telemetry panel", on_click=lambda: st.session_state.update({"show_telemetry": True}))
+        
     # Create a fixed-height scrollable container for messages independent of the input bar
     messages_container = st.container(height=600, border=False)
     
@@ -333,7 +340,7 @@ with chat_col:
                 st.markdown(f"{marker}{msg['content']}", unsafe_allow_html=True)
                 
                 if msg.get("turn") and msg["role"] == "user":
-                    st.button("🔍", key=f"btn_tel_{msg['turn']}", help="Highlight the tool executions for this query", on_click=lambda t=msg["turn"]: st.session_state.update({"active_telemetry_turn": t}))
+                    st.button("🔍", key=f"btn_tel_{msg['turn']}", help="Highlight the tool executions for this query", on_click=lambda t=msg["turn"]: st.session_state.update({"active_telemetry_turn": t, "show_telemetry": True}))
 
     # Determine what to run (either the user typed it, or they clicked a sidebar button)
     user_input = st.chat_input("Type your clinical query here...")
@@ -347,6 +354,7 @@ with chat_col:
         st.session_state.turn_count += 1
         current_turn = st.session_state.turn_count
         st.session_state.active_telemetry_turn = current_turn  # Auto-focus on the new turn
+        st.session_state.show_telemetry = True
         
         # 1. Add to history
         st.session_state.messages.append({"role": "user", "content": user_input, "turn": current_turn})
@@ -403,16 +411,18 @@ with chat_col:
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
         st.rerun()
 
-with telemetry_col:
-    st.markdown("<div class='telemetry-marker'></div>", unsafe_allow_html=True)
-    st.markdown("<h3><span class='cyan-text'>📡</span> Live Telemetry</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #666666; font-size: 0.9em; margin-bottom: 0px;'>Monitoring Agent Tool Execution</p>", unsafe_allow_html=True)
-    st.divider()
-    
-    if not st.session_state.telemetry:
-        st.info("No tools called yet. Ask the agent a clinical question!")
-    else:
-        for t_event in st.session_state.telemetry:
+if telemetry_col:
+    with telemetry_col:
+        st.markdown("<div class='telemetry-marker'></div>", unsafe_allow_html=True)
+        st.button("✖️ Close Panel", help="Hide Telemetry", on_click=lambda: st.session_state.update({"show_telemetry": False}))
+        st.markdown("<h3><span class='cyan-text'>📡</span> Live Telemetry</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #666666; font-size: 0.9em; margin-bottom: 0px;'>Monitoring Agent Tool Execution</p>", unsafe_allow_html=True)
+        st.divider()
+        
+        if not st.session_state.telemetry:
+            st.info("No tools called yet. Ask the agent a clinical question!")
+        else:
+            for t_event in st.session_state.telemetry:
             turn_id = t_event.get('turn')
             
             # Determine if this box should be expanded/highlighted
