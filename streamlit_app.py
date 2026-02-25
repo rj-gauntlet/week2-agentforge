@@ -14,7 +14,10 @@ st.markdown("""
         font-family: 'Gilroy-Bold', 'Gilroy-Regular', 'Gilroy', sans-serif !important;
     }
 
-    /* Restore Material Icons Font (Removed, using emojis) */
+    /* Restore Material Icons Font */
+    .material-symbols-rounded, .material-symbols-outlined, [data-testid="stIconMaterial"] {
+        font-family: 'Material Symbols Rounded', 'Material Symbols Outlined' !important;
+    }
 
     /* Force Light Theme for Main App Background */
     .stApp {
@@ -100,9 +103,6 @@ st.markdown("""
         padding: 15px 20px;
         color: #333333;
     }
-    div[data-testid="stChatMessage"]:has(.user-msg) .material-symbols-rounded {
-        display: none; /* Hide avatar */
-    }
     div[data-testid="stChatMessage"]:has(.user-msg) div[data-testid="stMarkdownContainer"] {
         text-align: right;
     }
@@ -117,9 +117,6 @@ st.markdown("""
         padding: 15px 20px;
         color: #333333;
         border: 1px solid rgba(0, 180, 216, 0.1);
-    }
-    div[data-testid="stChatMessage"]:has(.assistant-msg) .material-symbols-rounded {
-        display: none; /* Hide avatar */
     }
 
     /* --- SUBTLE TELEMETRY BUTTON --- */
@@ -222,19 +219,28 @@ st.markdown("""
     
     /* Expander visibility fix */
     [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderHeader {
-        background-color: #ffffff !important;
-        color: #333333 !important;
+        background-color: rgba(0, 180, 216, 0.05) !important;
+        color: #00B4D8 !important;
         border-radius: 10px !important;
-        border: 1px solid #e0e0e0 !important;
+        border: 1px solid rgba(0, 180, 216, 0.3) !important;
+    }
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderHeader:hover {
+        background-color: rgba(0, 180, 216, 0.1) !important;
     }
     [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderHeader p {
-        color: #333333 !important;
-        font-weight: 600;
+        color: #00B4D8 !important;
+        font-weight: 700;
+    }
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderHeader svg {
+        fill: #00B4D8 !important;
+        color: #00B4D8 !important;
     }
     [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderContent {
         background-color: #ffffff !important;
         border-radius: 0 0 10px 10px !important;
         color: #333333 !important;
+        border: 1px solid rgba(0, 180, 216, 0.3);
+        border-top: none;
     }
     [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderContent p, 
     [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderContent span {
