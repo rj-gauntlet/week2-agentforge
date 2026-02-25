@@ -220,8 +220,20 @@ if "active_telemetry_turn" not in st.session_state:
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.markdown("<h3 style='color: #ffffff !important;'>AgentForge <span style='color: #00B4D8 !important;'>Healthcare</span></h3>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size: 0.9em; margin-top: -10px;'>Your intelligent clinical assistant.</p>", unsafe_allow_html=True)
+    st.markdown("""
+        <div style='display: flex; align-items: center; gap: 12px; margin-bottom: 8px; margin-top: -15px;'>
+            <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="38" height="38" rx="12" fill="#00B4D8" fill-opacity="0.15"/>
+                <path d="M16 12H22V16H26V22H22V26H16V22H12V16H16V12Z" fill="#00B4D8" fill-opacity="0.2" stroke="#00B4D8" stroke-width="2" stroke-linejoin="round"/>
+                <circle cx="19" cy="19" r="3.5" fill="#00B4D8"/>
+                <circle cx="15.5" cy="15.5" r="1.5" fill="#ffffff"/>
+                <circle cx="22.5" cy="22.5" r="1.5" fill="#ffffff"/>
+                <path d="M16 16L19 19M22 22L19 19" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <h2 style='color: #ffffff !important; margin: 0; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; line-height: 1.1;'>AgentForge<br><span style='color: #00B4D8 !important; font-size: 1.05rem;'>Healthcare</span></h2>
+        </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.85em; color: rgba(255,255,255,0.6) !important; margin-bottom: 20px;'>Your intelligent clinical assistant.</p>", unsafe_allow_html=True)
     
     st.info("📱 **WhatsApp Access**\n\nText `join opposite-suit` to **+1 415 523 8886** to chat on the go!")
     
