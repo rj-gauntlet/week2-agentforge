@@ -8,29 +8,10 @@ st.set_page_config(page_title="AgentForge AI", page_icon=":material/local_hospit
 # --- CUSTOM CSS FOR CYAN MOCKUP THEME ---
 st.markdown("""
 <style>
-    @font-face {
-        font-family: 'Gilroy';
-        src: url('https://cdn.jsdelivr.net/gh/radvil/gilroy@master/Gilroy-Regular.woff') format('woff');
-        font-weight: 400;
-    }
-    @font-face {
-        font-family: 'Gilroy';
-        src: url('https://cdn.jsdelivr.net/gh/radvil/gilroy@master/Gilroy-SemiBold.woff') format('woff');
-        font-weight: 600;
-    }
-    @font-face {
-        font-family: 'Gilroy';
-        src: url('https://cdn.jsdelivr.net/gh/radvil/gilroy@master/Gilroy-Bold.woff') format('woff');
-        font-weight: 700;
-    }
-    @font-face {
-        font-family: 'Gilroy';
-        src: url('https://cdn.jsdelivr.net/gh/radvil/gilroy@master/Gilroy-ExtraBold.woff') format('woff');
-        font-weight: 800;
-    }
-
-    html, body, [class*="css"] {
-        font-family: 'Gilroy', sans-serif !important;
+    @import url('https://fonts.cdnfonts.com/css/gilroy-bold');
+    
+    * {
+        font-family: 'Gilroy-Bold', 'Gilroy-Regular', 'Gilroy', sans-serif !important;
     }
 
     /* Force Light Theme for Main App Background */
@@ -229,7 +210,7 @@ st.markdown("""
         color: #00B4D8 !important;
     }
     /* Telemetry Column Styling (Right Column) */
-    [data-testid="column"]:nth-of-type(2) {
+    div[data-testid="column"]:has(.telemetry-marker) {
         background-color: #f7f9fc !important;
         border-radius: 20px;
         padding: 1.5rem !important;
@@ -238,26 +219,26 @@ st.markdown("""
     }
     
     /* Expander visibility fix */
-    [data-testid="column"]:nth-of-type(2) .streamlit-expanderHeader {
+    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderHeader {
         background-color: #ffffff !important;
         color: #333333 !important;
         border-radius: 10px !important;
         border: 1px solid #e0e0e0 !important;
     }
-    [data-testid="column"]:nth-of-type(2) .streamlit-expanderHeader p {
+    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderHeader p {
         color: #333333 !important;
         font-weight: 600;
     }
-    [data-testid="column"]:nth-of-type(2) .streamlit-expanderContent {
+    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderContent {
         background-color: #ffffff !important;
         border-radius: 0 0 10px 10px !important;
         color: #333333 !important;
     }
-    [data-testid="column"]:nth-of-type(2) .streamlit-expanderContent p, 
-    [data-testid="column"]:nth-of-type(2) .streamlit-expanderContent span {
+    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderContent p, 
+    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderContent span {
         color: #333333 !important;
     }
-    [data-testid="column"]:nth-of-type(2) hr {
+    div[data-testid="column"]:has(.telemetry-marker) hr {
         border-bottom-color: rgba(0, 0, 0, 0.1);
     }
 </style>
@@ -415,6 +396,7 @@ with chat_col:
         st.rerun()
 
 with telemetry_col:
+    st.markdown("<div class='telemetry-marker'></div>", unsafe_allow_html=True)
     st.markdown("<h3><span class='cyan-text'>📡</span> Live Telemetry</h3>", unsafe_allow_html=True)
     st.caption("Monitoring Agent Tool Execution")
     st.divider()
