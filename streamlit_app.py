@@ -406,7 +406,7 @@ with chat_col:
 with telemetry_col:
     st.markdown("<div class='telemetry-marker'></div>", unsafe_allow_html=True)
     st.markdown("<h3><span class='cyan-text'>📡</span> Live Telemetry</h3>", unsafe_allow_html=True)
-    st.caption("Monitoring Agent Tool Execution")
+    st.markdown("<p style='color: #666666; font-size: 0.9em; margin-bottom: 0px;'>Monitoring Agent Tool Execution</p>", unsafe_allow_html=True)
     st.divider()
     
     if not st.session_state.telemetry:
@@ -421,16 +421,15 @@ with telemetry_col:
             if st.session_state.active_telemetry_turn is None and t_event == st.session_state.telemetry[-1]:
                 is_active = True
                 
-            turn_label = f"Turn #{turn_id}"
-            title = f"🟢 {turn_label} | {t_event['query'][:30]}..." if is_active else f"⚪ {turn_label} | {t_event['query'][:30]}..."
+            title = f"{t_event['query'][:35]}..."
             
             with st.expander(title, expanded=is_active):
                 for tool in t_event["tools"]:
-                    st.markdown(f"**🛠️ {tool['name']}**")
-                    st.caption("Inputs")
+                    st.markdown(f"<p style='color: #00B4D8; font-weight: bold; margin-bottom: 5px; font-size: 1.1em;'>🛠️ {tool['name']}</p>", unsafe_allow_html=True)
+                    st.markdown("<p style='color: #555555; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;'>Inputs</p>", unsafe_allow_html=True)
                     st.json(tool["args"])
                     if "output" in tool:
-                        st.caption("Outputs")
+                        st.markdown("<p style='color: #555555; font-size: 0.85em; margin-bottom: 5px; font-weight: 600; margin-top: 10px;'>Outputs</p>", unsafe_allow_html=True)
                         if isinstance(tool["output"], (dict, list)):
                             st.json(tool["output"])
                         else:
