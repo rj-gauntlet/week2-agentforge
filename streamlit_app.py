@@ -3,44 +3,115 @@ import json
 from agent.orchestrator import run_agent
 
 # --- PAGE SETUP ---
-st.set_page_config(page_title="AgentForge AI", page_icon=":material/local_hospital:", layout="wide")
+st.set_page_config(page_title="AgentForge AI", page_icon=":material/local_hospital:", layout="wide", initial_sidebar_state="expanded")
 
-# --- CUSTOM CSS FOR DUAL-TONE COLORING ---
+# --- CUSTOM CSS FOR CYAN MOCKUP THEME ---
 st.markdown("""
 <style>
-    /* Color the material icons in the sidebar buttons to Cyan */
-    [data-testid="stSidebar"] .material-symbols-rounded {
-        color: #00B4D8 !important;
-    }
-    /* Make button borders subtle Cyan */
-    [data-testid="stSidebar"] div.stButton > button {
-        border: 1px solid rgba(0, 180, 216, 0.3);
-    }
-    /* On hover, buttons glow Purple, but text stays white */
-    [data-testid="stSidebar"] div.stButton > button:hover {
-        border: 1px solid #9D4EDD;
-        color: #FFFFFF !important;
-    }
-    [data-testid="stSidebar"] div.stButton > button:hover .material-symbols-rounded {
-        color: #9D4EDD !important;
-    }
-    
-    /* --- COLOR THE CHAT AVATARS --- */
-    /* Target the avatars based on the custom classes we inject */
-    div[data-testid="stChatMessage"]:has(.user-msg) .material-symbols-rounded {
-        color: #00B4D8 !important;
-    }
-    
-    div[data-testid="stChatMessage"]:has(.assistant-msg) .material-symbols-rounded {
-        color: #9D4EDD !important;
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Nunito', sans-serif !important;
     }
 
-    /* --- RIGHT JUSTIFY USER MESSAGES --- */
+    /* Force Light Theme for Main App Background */
+    .stApp {
+        background: linear-gradient(135deg, #f0f4fd 0%, #e0eafc 100%);
+    }
+
+    /* Force Dark Theme for Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #1A1C23 !important;
+    }
+    /* Ensure sidebar text is readable */
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] div:not(.stButton > button):not(.hipaa-warning-box):not(.hipaa-warning-box *) {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+        color: #ffffff !important;
+    }
+    /* Sidebar divider */
+    [data-testid="stSidebar"] hr {
+        border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Main Content Container with rounded corners and shadow */
+    .block-container {
+        background-color: #ffffff;
+        border-radius: 20px;
+        padding: 2.5rem !important;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        max-width: 1200px !important;
+    }
+
+    /* Sidebar Button styling */
+    [data-testid="stSidebar"] div.stButton > button {
+        background-color: transparent !important;
+        border: none !important;
+        color: rgba(255, 255, 255, 0.7) !important;
+        justify-content: flex-start;
+        padding-left: 0.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s ease-in-out;
+    }
+    [data-testid="stSidebar"] div.stButton > button:hover {
+        background-color: rgba(0, 180, 216, 0.15) !important;
+        color: #00B4D8 !important;
+    }
+    [data-testid="stSidebar"] div.stButton > button .material-symbols-rounded {
+        color: rgba(255, 255, 255, 0.5) !important;
+        transition: all 0.2s ease-in-out;
+    }
+    [data-testid="stSidebar"] div.stButton > button:hover .material-symbols-rounded {
+        color: #00B4D8 !important;
+    }
+
+    /* Chat Input styling */
+    [data-testid="stChatInput"] {
+        background-color: #f4f6f9 !important;
+        border-radius: 30px !important;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+    [data-testid="stChatInput"] svg {
+        fill: #00B4D8 !important;
+    }
+
+    /* --- COLOR THE CHAT BUBBLES --- */
+    /* User Message */
     div[data-testid="stChatMessage"]:has(.user-msg) {
         flex-direction: row-reverse;
+        background-color: transparent;
+    }
+    div[data-testid="stChatMessage"]:has(.user-msg) div[data-testid="stChatMessageContent"] {
+        background-color: #f4f6f9;
+        border-radius: 20px 20px 0 20px;
+        padding: 15px 20px;
+        color: #333333;
+    }
+    div[data-testid="stChatMessage"]:has(.user-msg) .material-symbols-rounded {
+        display: none; /* Hide avatar */
     }
     div[data-testid="stChatMessage"]:has(.user-msg) div[data-testid="stMarkdownContainer"] {
         text-align: right;
+    }
+
+    /* Assistant Message */
+    div[data-testid="stChatMessage"]:has(.assistant-msg) {
+        background-color: transparent;
+    }
+    div[data-testid="stChatMessage"]:has(.assistant-msg) div[data-testid="stChatMessageContent"] {
+        background: linear-gradient(135deg, rgba(0, 180, 216, 0.05) 0%, rgba(0, 180, 216, 0.15) 100%);
+        border-radius: 20px 20px 20px 0;
+        padding: 15px 20px;
+        color: #333333;
+        border: 1px solid rgba(0, 180, 216, 0.1);
+    }
+    div[data-testid="stChatMessage"]:has(.assistant-msg) .material-symbols-rounded {
+        display: none; /* Hide avatar */
     }
 
     /* --- SUBTLE TELEMETRY BUTTON --- */
@@ -58,7 +129,7 @@ st.markdown("""
         background-color: transparent !important;
         border: none !important;
         box-shadow: none !important;
-        color: rgba(255, 255, 255, 0.3) !important;
+        color: rgba(0, 0, 0, 0.2) !important;
         padding: 0px !important;
         min-height: auto !important;
         height: auto !important;
@@ -67,6 +138,70 @@ st.markdown("""
     div[data-testid="stChatMessage"]:has(.user-msg) div.stButton > button:hover {
         color: #00B4D8 !important; /* Glows cyan on hover */
         background-color: transparent !important;
+    }
+
+    /* --- HIPAA WARNING BOX --- */
+    /* Force the sidebar to behave like a full-height flex column */
+    [data-testid="stSidebar"] > div:first-child {
+        display: flex;
+        flex-direction: column;
+    }
+    [data-testid="stSidebarUserContent"] {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    /* Push the warning box to the absolute bottom of the available space */
+    div.element-container:has(.hipaa-warning-box) {
+        margin-top: auto;
+        margin-bottom: 1.5rem; /* Aligns with the bottom text input bar */
+    }
+    .hipaa-warning-box {
+        background: linear-gradient(135deg, #00B4D8 0%, #0096C7 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        color: #ffffff !important;
+        font-size: 0.9em;
+        line-height: 1.5;
+        box-shadow: 0 10px 20px rgba(0, 180, 216, 0.3);
+    }
+    .hipaa-warning-box * {
+        color: #ffffff !important;
+    }
+    .hipaa-warning-box b {
+        display: block;
+        font-size: 1.4em;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+    .hipaa-warning-box .btn-learn-more {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.5rem 1.2rem;
+        background-color: #ffffff;
+        color: #00B4D8 !important;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.85em;
+        text-align: center;
+        width: max-content;
+    }
+    .hipaa-warning-box .btn-learn-more:hover {
+        background-color: #f0f4fd;
+    }
+
+    /* Main Titles */
+    h1 {
+        color: #1A1C23 !important;
+        font-weight: 800 !important;
+    }
+    h3 {
+        color: #1A1C23 !important;
+        font-weight: 700 !important;
+    }
+    .cyan-text {
+        color: #00B4D8 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -83,16 +218,16 @@ if "turn_count" not in st.session_state:
 if "active_telemetry_turn" not in st.session_state:
     st.session_state.active_telemetry_turn = None
 
-# --- SIDEBAR (The "Left Column" merged into the standard Sidebar) ---
+# --- SIDEBAR ---
 with st.sidebar:
-    st.markdown("<h3 style='color: #00B4D8;'>AgentForge Clinical</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #9D4EDD; font-size: 0.9em;'>Your intelligent healthcare assistant.</p>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #ffffff !important;'>AgentForge <span style='color: #00B4D8 !important;'>Healthcare</span></h3>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.9em; margin-top: -10px;'>Your intelligent clinical assistant.</p>", unsafe_allow_html=True)
     
     st.info("📱 **WhatsApp Access**\n\nText `join opposite-suit` to **+1 415 523 8886** to chat on the go!")
     
     st.divider()
     
-    st.markdown("#### Common Actions")
+    st.markdown("<p style='font-weight: 600; margin-bottom: 5px; color: #ffffff !important;'>Common Actions</p>", unsafe_allow_html=True)
     st.caption("Click to instantly send a query:")
     
     if st.button("Rx Interaction Check", icon=":material/medication:", use_container_width=True):
@@ -112,50 +247,26 @@ with st.sidebar:
 
     # Pin HIPAA warning to the bottom of the sidebar dynamically
     st.markdown("""
-        <style>
-        /* Force the sidebar to behave like a full-height flex column */
-        [data-testid="stSidebar"] > div:first-child {
-            display: flex;
-            flex-direction: column;
-        }
-        [data-testid="stSidebarUserContent"] {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-        /* Push the warning box to the absolute bottom of the available space */
-        div.element-container:has(.hipaa-warning-box) {
-            margin-top: auto;
-            margin-bottom: 1.5rem; /* Aligns with the bottom text input bar */
-        }
-        .hipaa-warning-box {
-            background-color: rgba(255, 171, 0, 0.15);
-            border: 1px solid rgba(255, 171, 0, 0.3);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            color: #FFB74D;
-            font-size: 0.85em;
-            line-height: 1.4;
-        }
-        </style>
         <div class="hipaa-warning-box">
-            ⚠️ <b>Notice:</b> All queries are logged for HIPAA compliance. Do not enter PHI.
+            <b>HIPAA Notice</b>
+            <p>All queries are logged for HIPAA compliance. Do not enter PHI.</p>
+            <a href="#" class="btn-learn-more">Learn More</a>
         </div>
     """, unsafe_allow_html=True)
 
-# --- MAIN CHAT INTERFACE (The ChatGPT Style) ---
-st.markdown("<h1 style='color: #00B4D8;'>AgentForge <span style='color: #9D4EDD;'>Healthcare</span></h1>", unsafe_allow_html=True)
-st.markdown("<p style='color: #B0B0B0;'>Ask me to check drug interactions, look up symptoms, find providers, or check insurance coverage!</p>", unsafe_allow_html=True)
+# --- MAIN CHAT INTERFACE ---
+st.markdown("<h1>AgentForge <span class='cyan-text'>Healthcare</span></h1>", unsafe_allow_html=True)
+st.markdown("<p style='color: #888888; font-size: 1.1em;'>Ask me to check drug interactions, look up symptoms, find providers, or check insurance coverage!</p>", unsafe_allow_html=True)
 st.divider()
 
 # --- COMMAND CENTER LAYOUT (CHAT + TELEMETRY) ---
 chat_col, telemetry_col = st.columns([2, 1], gap="large")
 
 with chat_col:
-    # Display existing messages in the classic scrolling style
+    # Display existing messages
     for msg in st.session_state.messages:
-        avatar_icon = ":material/person:" if msg["role"] == "user" else ":material/local_hospital:"
-        with st.chat_message(msg["role"], avatar=avatar_icon):
+        # We don't need avatar icons anymore as per mockup, CSS hides them, but we still pass them to avoid errors.
+        with st.chat_message(msg["role"]):
             marker = "<span class='user-msg'></span>" if msg["role"] == "user" else "<span class='assistant-msg'></span>"
             st.markdown(f"{marker}{msg['content']}", unsafe_allow_html=True)
             
@@ -179,12 +290,12 @@ with chat_col:
         st.session_state.messages.append({"role": "user", "content": user_input, "turn": current_turn})
         
         # 2. Display instantly in the chat
-        with st.chat_message("user", avatar=":material/person:"):
+        with st.chat_message("user"):
             st.markdown(f"<span class='user-msg'></span>{user_input}", unsafe_allow_html=True)
             st.button("🔍", key=f"btn_tel_{current_turn}_new", disabled=True, help="Processing...")
 
         # 3. AI response block
-        with st.chat_message("assistant", avatar=":material/local_hospital:"):
+        with st.chat_message("assistant"):
             with st.spinner("Accessing clinical databases..."):
                 history_for_agent = st.session_state.messages[:-1]
                 try:
@@ -208,7 +319,6 @@ with chat_col:
                                 # Try to parse as JSON for cleaner display, otherwise keep as string
                                 parsed_output = raw_output
                                 try:
-                                    import json
                                     parsed_output = json.loads(raw_output)
                                 except Exception:
                                     pass
@@ -231,7 +341,7 @@ with chat_col:
         st.rerun()
 
 with telemetry_col:
-    st.markdown("<h3 style='color: #9D4EDD;'>📡 Live Telemetry</h3>", unsafe_allow_html=True)
+    st.markdown("<h3><span class='cyan-text'>📡</span> Live Telemetry</h3>", unsafe_allow_html=True)
     st.caption("Monitoring Agent Tool Execution")
     st.divider()
     
