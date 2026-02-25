@@ -324,40 +324,40 @@ with chat_col:
                     try:
                         result = run_agent(query=user_input, chat_history=history_for_agent)
                         ai_response = result.get("output", "Error processing.")
-                    
-                    # --- TELEMETRY EXTRACTION ---
-                    tools_used = []
-                    # Map tool outputs by tool_call_id
-                    tool_outputs = {}
-                    for m in result.get("messages", []):
-                        if getattr(m, "type", None) == "tool" or m.__class__.__name__ == "ToolMessage":
-                            tool_outputs[m.tool_call_id] = m.content
-
-                    for m in result.get("messages", []):
-                        if hasattr(m, "tool_calls") and m.tool_calls:
-                            for tc in m.tool_calls:
-                                tc_id = tc.get("id")
-                                raw_output = tool_outputs.get(tc_id, "No output recorded.")
-                                
-                                # Try to parse as JSON for cleaner display, otherwise keep as string
-                                parsed_output = raw_output
-                                try:
-                                    parsed_output = json.loads(raw_output)
-                                except Exception:
-                                    pass
-                                    
-                                tools_used.append({
-                                    "name": tc["name"], 
-                                    "args": tc["args"],
-                                    "output": parsed_output
-                                })
-                                
-                    if tools_used:
-                        st.session_state.telemetry.append({"turn": current_turn, "query": user_input, "tools": tools_used})
                         
-                except Exception as e:
-                    ai_response = f"System Error: {str(e)}"
-                st.markdown(f"<span class='assistant-msg'></span>{ai_response}", unsafe_allow_html=True)
+                        # --- TELEMETRY EXTRACTION ---
+                        tools_used = []
+                        # Map tool outputs by tool_call_id
+                        tool_outputs = {}
+                        for m in result.get("messages", []):
+                            if getattr(m, "type", None) == "tool" or m.__class__.__name__ == "ToolMessage":
+                                tool_outputs[m.tool_call_id] = m.content
+
+                        for m in result.get("messages", []):
+                            if hasattr(m, "tool_calls") and m.tool_calls:
+                                for tc in m.tool_calls:
+                                    tc_id = tc.get("id")
+                                    raw_output = tool_outputs.get(tc_id, "No output recorded.")
+                                    
+                                    # Try to parse as JSON for cleaner display, otherwise keep as string
+                                    parsed_output = raw_output
+                                    try:
+                                        parsed_output = json.loads(raw_output)
+                                    except Exception:
+                                        pass
+                                        
+                                    tools_used.append({
+                                        "name": tc["name"], 
+                                        "args": tc["args"],
+                                        "output": parsed_output
+                                    })
+                                    
+                        if tools_used:
+                            st.session_state.telemetry.append({"turn": current_turn, "query": user_input, "tools": tools_used})
+                            
+                    except Exception as e:
+                        ai_response = f"System Error: {str(e)}"
+                    st.markdown(f"<span class='assistant-msg'></span>{ai_response}", unsafe_allow_html=True)
             
         # 4. Save response to history and force a UI refresh
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
