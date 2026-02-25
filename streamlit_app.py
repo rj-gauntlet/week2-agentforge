@@ -3,7 +3,7 @@ import json
 from agent.orchestrator import run_agent
 
 # --- PAGE SETUP ---
-st.set_page_config(page_title="AgentForge AI", page_icon=":material/local_hospital:", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="AgentForge AI", page_icon="🏥", layout="wide", initial_sidebar_state="expanded")
 
 # --- CUSTOM CSS FOR CYAN MOCKUP THEME ---
 st.markdown("""
@@ -14,10 +14,7 @@ st.markdown("""
         font-family: 'Gilroy-Bold', 'Gilroy-Regular', 'Gilroy', sans-serif !important;
     }
 
-    /* Restore Material Icons Font */
-    .material-symbols-rounded {
-        font-family: 'Material Symbols Rounded' !important;
-    }
+    /* Restore Material Icons Font (Removed, using emojis) */
 
     /* Force Light Theme for Main App Background */
     .stApp {
@@ -215,7 +212,7 @@ st.markdown("""
         color: #00B4D8 !important;
     }
     /* Telemetry Column Styling (Right Column) */
-    div[data-testid="column"]:has(.telemetry-marker) {
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) {
         background-color: #f7f9fc !important;
         border-radius: 20px;
         padding: 1.5rem !important;
@@ -224,26 +221,26 @@ st.markdown("""
     }
     
     /* Expander visibility fix */
-    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderHeader {
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderHeader {
         background-color: #ffffff !important;
         color: #333333 !important;
         border-radius: 10px !important;
         border: 1px solid #e0e0e0 !important;
     }
-    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderHeader p {
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderHeader p {
         color: #333333 !important;
         font-weight: 600;
     }
-    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderContent {
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderContent {
         background-color: #ffffff !important;
         border-radius: 0 0 10px 10px !important;
         color: #333333 !important;
     }
-    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderContent p, 
-    div[data-testid="column"]:has(.telemetry-marker) .streamlit-expanderContent span {
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderContent p, 
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) .streamlit-expanderContent span {
         color: #333333 !important;
     }
-    div[data-testid="column"]:has(.telemetry-marker) hr {
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) hr {
         border-bottom-color: rgba(0, 0, 0, 0.1);
     }
 </style>
@@ -273,7 +270,7 @@ with st.sidebar:
                 <circle cx="22.5" cy="22.5" r="1.5" fill="#ffffff"/>
                 <path d="M16 16L19 19M22 22L19 19" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
-            <h2 style='color: #ffffff !important; margin: 0; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; line-height: 1.1;'>AgentForge<br><span style='color: #00B4D8 !important; font-size: 1.05rem;'>Healthcare</span></h2>
+            <h2 style='color: #ffffff !important; margin: 0; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; line-height: 1.1;'>AgentForge<br><span style='color: #00B4D8 !important; font-size: 1.3rem;'>Healthcare</span></h2>
         </div>
     """, unsafe_allow_html=True)
     st.markdown("<p style='font-size: 0.85em; color: rgba(255,255,255,0.6) !important; margin-bottom: 20px;'>Your intelligent clinical assistant.</p>", unsafe_allow_html=True)
@@ -285,19 +282,19 @@ with st.sidebar:
     st.markdown("<p style='font-weight: 600; margin-bottom: 5px; color: #ffffff !important;'>Common Actions</p>", unsafe_allow_html=True)
     st.caption("Click to instantly send a query:")
     
-    if st.button("Rx Interaction Check", icon=":material/medication:", use_container_width=True):
+    if st.button("Rx Interaction Check", icon="💊", use_container_width=True):
         st.session_state.preset_query = "Is it safe to take aspirin and ibuprofen together?"
     
-    if st.button("Symptom Triage", icon=":material/health_metrics:", use_container_width=True):
+    if st.button("Symptom Triage", icon="🩺", use_container_width=True):
         st.session_state.preset_query = "Patient reports headache and fever. Possible causes?"
     
-    if st.button("Find Provider", icon=":material/person_search:", use_container_width=True):
+    if st.button("Find Provider", icon="🧑‍⚕️", use_container_width=True):
         st.session_state.preset_query = "Can you find me a cardiologist in Austin, TX?"
         
-    if st.button("Check Schedule", icon=":material/calendar_month:", use_container_width=True):
+    if st.button("Check Schedule", icon="📅", use_container_width=True):
         st.session_state.preset_query = "Any open slots for prov_001 next week?"
         
-    if st.button("Verify Insurance", icon=":material/health_and_safety:", use_container_width=True):
+    if st.button("Verify Insurance", icon="🛡️", use_container_width=True):
         st.session_state.preset_query = "Does plan plan_001 cover procedure 99213?"
 
     # Pin HIPAA warning to the bottom of the sidebar dynamically
