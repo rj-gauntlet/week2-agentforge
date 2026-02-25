@@ -14,6 +14,11 @@ st.markdown("""
         font-family: 'Gilroy-Bold', 'Gilroy-Regular', 'Gilroy', sans-serif !important;
     }
 
+    /* Restore Material Icons Font */
+    .material-symbols-rounded {
+        font-family: 'Material Symbols Rounded' !important;
+    }
+
     /* Force Light Theme for Main App Background */
     .stApp {
         background: linear-gradient(135deg, #f0f4fd 0%, #e0eafc 100%);
