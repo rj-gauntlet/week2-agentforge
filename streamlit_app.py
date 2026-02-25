@@ -423,25 +423,25 @@ if telemetry_col:
             st.info("No tools called yet. Ask the agent a clinical question!")
         else:
             for t_event in st.session_state.telemetry:
-            turn_id = t_event.get('turn')
-            
-            # Determine if this box should be expanded/highlighted
-            is_active = (turn_id == st.session_state.active_telemetry_turn)
-            # Default to the most recent turn if none is explicitly clicked yet
-            if st.session_state.active_telemetry_turn is None and t_event == st.session_state.telemetry[-1]:
-                is_active = True
+                turn_id = t_event.get('turn')
                 
-            title = f"{t_event['query'][:35]}..."
-            
-            with st.expander(title, expanded=is_active):
-                for tool in t_event["tools"]:
-                    st.markdown(f"<p style='color: #00B4D8; font-weight: bold; margin-bottom: 5px; font-size: 1.1em;'>🛠️ {tool['name']}</p>", unsafe_allow_html=True)
-                    st.markdown("<p style='color: #555555; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;'>Inputs</p>", unsafe_allow_html=True)
-                    st.json(tool["args"])
-                    if "output" in tool:
-                        st.markdown("<p style='color: #555555; font-size: 0.85em; margin-bottom: 5px; font-weight: 600; margin-top: 10px;'>Outputs</p>", unsafe_allow_html=True)
-                        if isinstance(tool["output"], (dict, list)):
-                            st.json(tool["output"])
-                        else:
-                            st.info(tool["output"])
-                    st.divider()
+                # Determine if this box should be expanded/highlighted
+                is_active = (turn_id == st.session_state.active_telemetry_turn)
+                # Default to the most recent turn if none is explicitly clicked yet
+                if st.session_state.active_telemetry_turn is None and t_event == st.session_state.telemetry[-1]:
+                    is_active = True
+                    
+                title = f"{t_event['query'][:35]}..."
+                
+                with st.expander(title, expanded=is_active):
+                    for tool in t_event["tools"]:
+                        st.markdown(f"<p style='color: #00B4D8; font-weight: bold; margin-bottom: 5px; font-size: 1.1em;'>🛠️ {tool['name']}</p>", unsafe_allow_html=True)
+                        st.markdown("<p style='color: #555555; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;'>Inputs</p>", unsafe_allow_html=True)
+                        st.json(tool["args"])
+                        if "output" in tool:
+                            st.markdown("<p style='color: #555555; font-size: 0.85em; margin-bottom: 5px; font-weight: 600; margin-top: 10px;'>Outputs</p>", unsafe_allow_html=True)
+                            if isinstance(tool["output"], (dict, list)):
+                                st.json(tool["output"])
+                            else:
+                                st.info(tool["output"])
+                        st.divider()
