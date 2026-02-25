@@ -117,6 +117,7 @@ with st.sidebar:
         [data-testid="stSidebar"] > div:first-child {
             display: flex;
             flex-direction: column;
+            height: 100vh;
         }
         [data-testid="stSidebarUserContent"] {
             display: flex;
@@ -152,15 +153,19 @@ st.divider()
 chat_col, telemetry_col = st.columns([2, 1], gap="large")
 
 with chat_col:
-    # Display existing messages in the classic scrolling style
-    for msg in st.session_state.messages:
-        avatar_icon = ":material/person:" if msg["role"] == "user" else ":material/local_hospital:"
-        with st.chat_message(msg["role"], avatar=avatar_icon):
-            marker = "<span class='user-msg'></span>" if msg["role"] == "user" else "<span class='assistant-msg'></span>"
-            st.markdown(f"{marker}{msg['content']}", unsafe_allow_html=True)
-            
-            if msg.get("turn") and msg["role"] == "user":
-                st.button("🔍", key=f"btn_tel_{msg['turn']}", help="Highlight the tool executions for this query", on_click=lambda t=msg["turn"]: st.session_state.update({"active_telemetry_turn": t}))
+    # Create a fixed-height scrollable container for messages
+    messages_container = st.container(height=600, border=False)
+    
+    with messages_container:
+        # Display existing messages in the classic scrolling style
+        for msg in st.session_state.messages:
+            avatar_icon = ":material/person:" if msg["role"] == "user" else ":material/local_hospital:"
+            with st.chat_message(msg["role"], avatar=avatar_icon):
+                marker = "<span class='user-msg'></span>" if msg["role"] == "user" else "<span class='assistant-msg'></span>"
+                st.markdown(f"{marker}{msg['content']}", unsafe_allow_html=True)
+                
+                if msg.get("turn") and msg["role"] == "user":
+                    st.button("🔍", key=f"btn_tel_{msg['turn']}", help="Highlight the tool executions for this query", on_click=lambda t=msg["turn"]: st.session_state.update({"active_telemetry_turn": t}))
 
     # Determine what to run (either the user typed it, or they clicked a sidebar button)
     user_input = st.chat_input("Type your clinical query here...")
@@ -178,13 +183,14 @@ with chat_col:
         # 1. Add to history
         st.session_state.messages.append({"role": "user", "content": user_input, "turn": current_turn})
         
-        # 2. Display instantly in the chat
-        with st.chat_message("user", avatar=":material/person:"):
-            st.markdown(f"<span class='user-msg'></span>{user_input}", unsafe_allow_html=True)
-            st.button("🔍", key=f"btn_tel_{current_turn}_new", disabled=True, help="Processing...")
+        with messages_container:
+            # 2. Display instantly in the chat
+            with st.chat_message("user", avatar=":material/person:"):
+                st.markdown(f"<span class='user-msg'></span>{user_input}", unsafe_allow_html=True)
+                st.button("🔍", key=f"btn_tel_{current_turn}_new", disabled=True, help="Processing...")
 
-        # 3. AI response block
-        with st.chat_message("assistant", avatar=":material/local_hospital:"):
+            # 3. AI response block
+            with st.chat_message("assistant", avatar=":material/local_hospital:"):
             with st.spinner("Accessing clinical databases..."):
                 history_for_agent = st.session_state.messages[:-1]
                 try:
