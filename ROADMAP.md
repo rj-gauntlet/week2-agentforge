@@ -125,7 +125,7 @@
 
 ### Morning
 
-- [ ] **50 test cases:** Reach 20+ happy, 10+ edge, 10+ adversarial, 10+ multi-step. Document each with expected outcomes and criteria.
+- [x] **50 test cases:** Reach 20+ happy, 10+ edge, 10+ adversarial, 10+ multi-step. Document each with expected outcomes and criteria.
 - [ ] **Eval results dashboard/report:** Historical scores; ability to detect regressions (via observability or script).
 
 ### Afternoon
