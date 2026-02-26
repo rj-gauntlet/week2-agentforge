@@ -19,7 +19,7 @@
 | 8 | 5+ test cases | ✅ Done | 5 eval cases + unit/integration; all 32 tests pass. |
 | 9 | **Deployed and publicly accessible** | ✅ Done | API Live on Railway. Custom Web UI on Streamlit Cloud. WhatsApp/SMS via Twilio. |
 
-**MVP:** All 9 requirements complete! Plus multiple advanced user interfaces deployed.
+**MVP:** All 9 requirements complete! Plus multiple advanced user interfaces deployed. **(APPROVED)**
 
 ---
 
@@ -35,9 +35,15 @@
 - **Done:** Deployed to Railway; public URL; smoke test passed.
 - **Done:** Front-End UIs Built: Streamlit Chat Interface and WhatsApp/SMS Twilio Bot.
 
-### Day 2+ — Not started
+### Day 2–4 — Observability, Evals, Verifications (Done) ✅
 
-- **Day 2:** Multi-step tool chaining (orchestrator can already use multiple tools in one turn), observability (LangSmith etc.), latency/token logging.
+- **Day 2:** Multi-step tool chaining, observability (LangSmith) integrated.
+- **Day 3:** Eval framework in place, 36+ cases.
+- **Day 4:** 50 test cases, eval results reporting, UI feedback mechanism, 3+ verification checks added. Early submission checkpoint met.
+
+### Day 5+ — Performance, Docs & Final Submission
+
+- **Day 5:** Verification polish, performance tracking.
 - **Final Submission:** Voice Assistant implementation (via Twilio Voice or Web Speech API), Agent Architecture Doc, demo video, submission.
   - **IMPORTANT TODO:** Check if the Twilio `+18447342479` number has been approved for Toll-Free verification so it can be swapped out from the Sandbox number before final submission!
 
