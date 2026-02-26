@@ -208,6 +208,10 @@
 - [ ] **Submit:** All links and files per course instructions.
 - [ ] **Interview prep:** Review PRD “Interview Prep”; rehearse framework choice, tool design, verification, evals, scaling.
 
+### Stretch Goals (Final Submission)
+
+- [ ] **Extra Hero Tools:** Implement 1 or 2 more complex, high-value tools (e.g., lab result interpretation, contraindication checking).
+
 ---
 
 ## Quick Reference — Priority Order (From PRD)
