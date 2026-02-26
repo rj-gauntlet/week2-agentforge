@@ -142,7 +142,7 @@
 ### Stretch Goals (Early Submission)
 
 - [ ] **Host OpenEMR:** Deploy OpenEMR on Railway so it is publicly available.
-- [x] **Revamp App UI:** Completely redesign the frontend UI for a better user experience.
+- [ ] **Revamp App UI:** Completely redesign the frontend UI for a better user experience.
 
 ---
 
