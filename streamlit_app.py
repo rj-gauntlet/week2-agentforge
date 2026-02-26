@@ -1,6 +1,32 @@
-import streamlit as st
 import json
+import os
+import urllib.request
+import urllib.error
+import streamlit as st
 from agent.orchestrator import run_agent
+
+
+def _send_feedback(message_id: str, rating: str) -> None:
+    """POST to the FastAPI /feedback endpoint; on success, record Thanks state for this turn."""
+    base = os.getenv("API_BASE_URL", "http://localhost:8000")
+    url = f"{base.rstrip('/')}/feedback"
+    data = json.dumps({"message_id": message_id, "rating": rating}).encode("utf-8")
+    req = urllib.request.Request(url, data=data, method="POST", headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            if 200 <= resp.status < 300:
+                turn_id = message_id.replace("turn_", "")
+                if turn_id.isdigit():
+                    if "feedback_sent" not in st.session_state:
+                        st.session_state.feedback_sent = set()
+                    st.session_state.feedback_sent.add(int(turn_id))
+                st.toast("Thanks! Feedback recorded.")
+            else:
+                st.toast("Feedback endpoint returned an error.")
+    except urllib.error.URLError as e:
+        st.toast(f"Could not reach feedback server: {e.reason}. Is the API running at {base}?")
+    except Exception as e:
+        st.toast(f"Could not send feedback: {e}")
 
 # --- PAGE SETUP ---
 st.set_page_config(page_title="AgentForge AI", page_icon=":material/local_hospital:", layout="wide")
@@ -68,6 +94,39 @@ st.markdown("""
         color: #00B4D8 !important; /* Glows cyan on hover */
         background-color: transparent !important;
     }
+
+    /* --- M3 FEEDBACK (tonal icon buttons: 40dp target, rounded, tertiary color) --- */
+    div[data-testid="stChatMessage"]:has(.assistant-msg) div.stButton > button {
+        /* M3 tonal icon button: 40dp target, rounded, no border */
+        min-width: 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        padding: 0 !important;
+        border-radius: 20px !important;
+        border: none !important;
+        background-color: rgba(157, 78, 221, 0.12) !important;
+        color: #9D4EDD !important;
+        box-shadow: none !important;
+        font-size: 1.1rem !important;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    div[data-testid="stChatMessage"]:has(.assistant-msg) div.stButton > button:hover {
+        background-color: rgba(157, 78, 221, 0.24) !important;
+        color: #B47AED !important;
+    }
+    /* Right-justify feedback row; no gap so the two buttons sit flush */
+    div[data-testid="stChatMessage"]:has(.assistant-msg) [data-testid="stHorizontalBlock"] {
+        justify-content: flex-end !important;
+        gap: 0 !important;
+    }
+    /* Right-align the "Was this helpful?" / "Thanks" caption */
+    div[data-testid="stChatMessage"]:has(.assistant-msg) .feedback-caption {
+        text-align: right !important;
+        font-size: 0.75rem !important;
+        color: rgba(255, 255, 255, 0.6) !important;
+        margin: 0 0 4px 0 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -82,6 +141,8 @@ if "turn_count" not in st.session_state:
     st.session_state.turn_count = 0
 if "active_telemetry_turn" not in st.session_state:
     st.session_state.active_telemetry_turn = None
+if "feedback_sent" not in st.session_state:
+    st.session_state.feedback_sent = set()
 
 # --- SIDEBAR (The "Left Column" merged into the standard Sidebar) ---
 with st.sidebar:
@@ -89,6 +150,7 @@ with st.sidebar:
     st.markdown("<p style='color: #9D4EDD; font-size: 0.9em;'>Your intelligent healthcare assistant.</p>", unsafe_allow_html=True)
     
     st.info("📱 **WhatsApp Access**\n\nText `join opposite-suit` to **+1 415 523 8886** to chat on the go!")
+    st.caption("👍/👎 under each reply send feedback to the API (start it with `uvicorn main:app` for feedback to work).")
     
     st.divider()
     
@@ -166,6 +228,20 @@ with chat_col:
                 
                 if msg.get("turn") and msg["role"] == "user":
                     st.button("🔍", key=f"btn_tel_{msg['turn']}", help="Highlight the tool executions for this query", on_click=lambda t=msg["turn"]: st.session_state.update({"active_telemetry_turn": t}))
+                
+                if msg.get("turn") is not None and msg["role"] == "assistant":
+                    fid = msg["turn"]
+                    spacer, feedback_col = st.columns([6, 1])
+                    with feedback_col:
+                        if fid in st.session_state.feedback_sent:
+                            st.markdown('<p class="feedback-caption">Thanks for your feedback!</p>', unsafe_allow_html=True)
+                        else:
+                            st.markdown('<p class="feedback-caption">Was this helpful?</p>', unsafe_allow_html=True)
+                            up_col, down_col = st.columns(2)  # two buttons share one narrow strip
+                            with up_col:
+                                st.button("👍", key=f"fb_up_{fid}", help="Good response", on_click=_send_feedback, args=(f"turn_{fid}", "thumbs_up"))
+                            with down_col:
+                                st.button("👎", key=f"fb_down_{fid}", help="Bad response", on_click=_send_feedback, args=(f"turn_{fid}", "thumbs_down"))
 
     # Determine what to run (either the user typed it, or they clicked a sidebar button)
     user_input = st.chat_input("Type your clinical query here...")
@@ -232,8 +308,8 @@ with chat_col:
                         ai_response = f"System Error: {str(e)}"
                     st.markdown(f"<span class='assistant-msg'></span>{ai_response}", unsafe_allow_html=True)
             
-        # 4. Save response to history and force a UI refresh
-        st.session_state.messages.append({"role": "assistant", "content": ai_response})
+        # 4. Save response to history (include turn so feedback buttons can target this message)
+        st.session_state.messages.append({"role": "assistant", "content": ai_response, "turn": current_turn})
         st.rerun()
 
 with telemetry_col:

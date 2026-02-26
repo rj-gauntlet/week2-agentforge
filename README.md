@@ -68,15 +68,28 @@ See [TESTING.md](./TESTING.md) for TDD and detailed instructions.
 
 Per the MVP requirements, this project includes a robust suite of end-to-end evaluation tests that verify the agent's ability to reason, call tools, and handle multi-step chains.
 
-**👉 Link to Evals File:** [tests/eval/test_eval_mvp.py](./tests/eval/test_eval_mvp.py)
+**Eval dataset:** [data/eval_cases.json](./data/eval_cases.json) — cases by category (happy_path, edge_case, adversarial, multi_step).  
+**Eval harness:** [scripts/run_eval_harness.py](./scripts/run_eval_harness.py) — automated runner; writes pass/fail to [data/eval_results_latest.json](./data/eval_results_latest.json) and a timestamped copy under `data/eval_results/` for history.  
+**Full eval guide:** [EVAL.md](./EVAL.md) — dataset format, how to run, and observability.
 
-**To run the evals for your demonstration video:**
-1. Ensure your `.env` is configured with a valid API key.
-2. Run the following command from the project root:
+**To run the eval harness (full dataset, recommended):**
+1. Ensure your `.env` has `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`.
+2. From the project root:
    ```powershell
-   .\.venv\Scripts\python.exe -m pytest tests/eval/test_eval_mvp.py -v
+   .\.venv\Scripts\python.exe scripts\run_eval_harness.py
    ```
-3. Watch the terminal output as the agent successfully parses medical queries, triggers the correct underlying tools (e.g., `drug_interaction_check`, `provider_search`), and synthesizes a safe response.
+3. View per-category and overall pass rate in the terminal; results are saved to `data/eval_results_latest.json` for regression tracking.
+4. Optional: set `LANGCHAIN_TRACING_V2=true` and `LANGCHAIN_API_KEY` in `.env` to send traces to LangSmith.
+
+**To run evals via pytest (including MVP smoke tests):**
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/eval -v
+```
+(Skips tests that require an API key if none is set.)
+
+**Eval dataset format** (`data/eval_cases.json`): each case is an object with `category`, `query`, `expected_tools`, `expected_output_contains`, and optional:
+- `expected_flags` (e.g. `{"can_diagnose": false}` to require a consult-provider disclaimer)
+- `expected_tool_output` — structured assertions on tool return values (e.g. `{"insurance_coverage_check": {"covered": false}}`) so evals don't depend on exact wording. The harness checks that the named tool's returned JSON includes the given key-value pairs.
 
 ---
 

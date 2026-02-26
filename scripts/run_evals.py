@@ -24,6 +24,7 @@ def agent_target(inputs: dict) -> dict:
     # Extract tools used and their outputs
     tools_used = []
     tool_outputs = {}
+    parsed_outputs = {}
     for m in result.get("messages", []):
         if getattr(m, "type", None) == "tool" or m.__class__.__name__ == "ToolMessage":
             try:
@@ -35,17 +36,13 @@ def agent_target(inputs: dict) -> dict:
         if hasattr(m, "tool_calls") and m.tool_calls:
             for tc in m.tool_calls:
                 tools_used.append(tc["name"])
-                # Attach parsed output to the tool name (simplified)
                 if tc.get("id") in tool_outputs:
-                    # store it keyed by tool name for easy assertions
-                    if "parsed_outputs" not in locals():
-                        parsed_outputs = {}
                     parsed_outputs[tc["name"]] = tool_outputs[tc["id"]]
-                
+
     return {
         "output": result.get("output", ""),
         "tools_used": tools_used,
-        "tool_outputs": locals().get("parsed_outputs", {}),
+        "tool_outputs": parsed_outputs,
         "error": result.get("error", None)
     }
 

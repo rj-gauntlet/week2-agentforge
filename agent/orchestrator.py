@@ -70,6 +70,66 @@ def _messages_from_history(chat_history: list[dict[str, str]]) -> list[BaseMessa
     return out
 
 
+def _verify_input_domain(query: str) -> str | None:
+    """Verification 1: Domain Constraints / Input validation.
+    Quick heuristic check to catch blatant adversarial or out-of-domain requests before LLM processing."""
+    query_lower = query.lower()
+    adversarial_keywords = ["ignore previous", "system prompt", "hack", "bypass"]
+    if any(kw in query_lower for kw in adversarial_keywords):
+        return "I'm a healthcare assistant and cannot fulfill requests that bypass my instructions or involve hacking."
+    return None
+
+import re
+
+def _verify_phi_redaction(query: str) -> str:
+    """Verification 3: PHI Redaction / Privacy check.
+    Masks out sensitive information like SSNs, Phone Numbers, and Dates of Birth before sending to the LLM."""
+    
+    # 1. Redact SSN (e.g., 123-45-6789 or 123456789)
+    ssn_pattern = r'\b\d{3}[-]?\d{2}[-]?\d{4}\b'
+    query = re.sub(ssn_pattern, '[REDACTED SSN]', query)
+    
+    # 2. Redact Phone Numbers (e.g., 555-555-5555, (555) 555-5555, +1-555-555-5555)
+    phone_pattern = r'\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b'
+    query = re.sub(phone_pattern, '[REDACTED PHONE]', query)
+    
+    # 3. Redact Birthdays/Dates ONLY if preceded by DOB keywords (e.g., "DOB", "born on")
+    # This prevents redacting appointment dates like "2025-03-01"
+    dob_pattern = r'(?i)\b(?:dob|born|birth(?:day|date)?)\s*(?:on|is)?\s*[:\s]*(\d{1,4}[-/]\d{1,2}[-/]\d{1,4})\b'
+    query = re.sub(dob_pattern, '[REDACTED DOB]', query)
+    
+    return query
+
+def _verify_fact_check(output: str, tool_messages: list) -> str:
+    """Verification 4: Fact-Checking against Tool Output.
+    If the drug interaction tool was called, ensure the LLM didn't hallucinate a 'fatal' severity
+    if the tool only returned 'minor'.
+    """
+    output_lower = output.lower()
+    
+    for tm in tool_messages:
+        # Check if the step was the drug_interaction_check tool
+        if tm.name == "drug_interaction_check":
+            result_str = str(tm.content).lower()
+            
+            # If the tool result says "minor" but the LLM output claims "fatal" or "major"
+            if "minor" in result_str and ("fatal" in output_lower or "major" in output_lower):
+                return output + "\n\n(Fact-Check Error: The LLM severity description contradicts the tool's 'minor' rating. Please verify.)"
+    
+    return output
+
+def _verify_output_safety(output: str) -> str:
+    """Verification 2: Output Validation / Safety check.
+    Ensure that any output discussing symptoms or conditions includes a safety disclaimer."""
+    output_lower = output.lower()
+    clinical_keywords = ["headache", "fever", "pain", "infection", "symptom", "disease", "condition", "diagnose"]
+    needs_disclaimer = any(kw in output_lower for kw in clinical_keywords)
+    has_disclaimer = "not a diagnosis" in output_lower or "consult your provider" in output_lower
+    
+    if needs_disclaimer and not has_disclaimer:
+        return output + "\n\n(Disclaimer: This information is not a diagnosis. Please consult your provider.)"
+    return output
+
 def run_agent(
     query: str,
     chat_history: list[dict[str, str]] | None = None,
@@ -78,6 +138,17 @@ def run_agent(
     Run the agent on a user query with optional conversation history.
     Returns { "output": str, "messages": list (updated with this turn), "error": str? }.
     """
+    # 3. Verification: PHI Redaction Check
+    query = _verify_phi_redaction(query)
+
+    # 1. Verification: Input Domain Check
+    input_violation = _verify_input_domain(query)
+    if input_violation:
+        return {
+            "output": input_violation,
+            "messages": chat_history or [],
+        }
+
     chat_history = chat_history or []
     messages = _messages_from_history(chat_history)
     messages.append(HumanMessage(content=query))
@@ -98,6 +169,18 @@ def run_agent(
         if hasattr(m, "content") and m.content and isinstance(m.content, str):
             output = m.content
             break
+
+    # 4. Verification: Fact Check against tool output
+    # We can pull intermediate tool messages from the history
+    from langchain_core.messages import ToolMessage
+    tool_messages = [m for m in out_messages if isinstance(m, ToolMessage)]
+    
+    if output and tool_messages:
+        output = _verify_fact_check(output, tool_messages)
+
+    # 2. Verification: Output Safety Check
+    if output:
+        output = _verify_output_safety(output)
 
     return {
         "output": output or "I couldn't generate a response. Please try again.",

@@ -102,20 +102,20 @@
 
 ### Morning
 
-- [ ] **Eval harness:** Automated runner for test cases (input, expected tool calls/output, pass/fail). Integrate with observability if supported (e.g. LangSmith Evals).
-- [ ] **Happy path:** Add happy-path cases toward 20+ total (can include original 5).
-- [ ] **Edge cases:** Add 5+ edge cases (missing data, boundaries, invalid input).
+- [x] **Eval harness:** Automated runner for test cases (input, expected tool calls/output, pass/fail). Integrate with observability if supported (e.g. LangSmith Evals).
+- [x] **Happy path:** Add happy-path cases toward 20+ total (can include original 5).
+- [x] **Edge cases:** Add 5+ edge cases (missing data, boundaries, invalid input).
 
 ### Afternoon
 
-- [ ] **Adversarial:** Add 5+ adversarial cases (prompt injection, bypass verification, harmful requests).
-- [ ] **Multi-step:** Add 5+ multi-step reasoning scenarios (expected tool chain + output).
-- [ ] **Baseline run:** Full eval run; record pass rate by category. Target >80% overall later.
+- [x] **Adversarial:** Add 5+ adversarial cases (prompt injection, bypass verification, harmful requests).
+- [x] **Multi-step:** Add 5+ multi-step reasoning scenarios (expected tool chain + output).
+- [x] **Baseline run:** Full eval run; record pass rate by category. Target >80% overall later.
 
 ### Evening
 
-- [ ] **Regression:** Ensure eval results are stored/historical (for “Eval results” in observability).
-- [ ] **Document:** Eval dataset format and how to run (for submission and open source).
+- [x] **Regression:** Ensure eval results are stored/historical (for “Eval results” in observability).
+- [x] **Document:** Eval dataset format and how to run (for submission and open source).
 
 ---
 
@@ -125,18 +125,19 @@
 
 ### Morning
 
-- [ ] **50 test cases:** Reach 20+ happy, 10+ edge, 10+ adversarial, 10+ multi-step. Document each with expected outcomes and criteria.
-- [ ] **Eval results dashboard/report:** Historical scores; ability to detect regressions (via observability or script).
+- [x] **50 test cases:** Reach 20+ happy, 10+ edge, 10+ adversarial, 10+ multi-step. Document each with expected outcomes and criteria.
+- [x] **Eval results dashboard/report:** Historical scores; ability to detect regressions (via observability or script).
 
 ### Afternoon
 
-- [ ] **Observability complete:** Trace, latency, errors, token usage, eval results, plus mechanism for user feedback (e.g. thumbs up/down endpoint or UI).
-- [ ] **Verification (3+):** Implement two more verification types (e.g. fact checking, confidence scoring, domain constraints, output validation, or human-in-the-loop trigger). Document in architecture notes.
+- [x] **Observability complete:** Trace, latency, errors, token usage, eval results, plus mechanism for user feedback (e.g. thumbs up/down endpoint or UI).
+- [x] **Verification (3+):** Implement two more verification types (e.g. fact checking, confidence scoring, domain constraints, output validation, or human-in-the-loop trigger). Document in architecture notes.
 
 ### Evening
 
-- [ ] **Run full eval suite:** Record pass rate; fix critical failures if time allows.
-- [ ] **Early submission checkpoint:** Confirm eval framework + observability are done and documented.
+- [x] **Frontend feedback UI:** Add thumbs up/down buttons to the chat interface to hit the `/feedback` endpoint.
+- [x] **Run full eval suite:** Record pass rate; fix critical failures if time allows.
+- [x] **Early submission checkpoint:** Confirm eval framework + observability are done and documented. (APPROVED)
 
 ---
 
