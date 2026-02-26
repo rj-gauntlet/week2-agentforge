@@ -144,6 +144,7 @@ def main():
         sys.exit(1)
 
     from agent.orchestrator import run_agent
+    import time
 
     cases = load_eval_cases()
     print(f"Running eval harness on {len(cases)} cases from data/eval_cases.json ...")
@@ -153,6 +154,8 @@ def main():
         results.append(r)
         status = "PASS" if r["passed"] else "FAIL"
         print(f"  [{i+1}/{len(cases)}] {status}  {r['category']}: {r['query'][:50]}…")
+        # Sleep briefly to avoid hitting OpenAI rate limits
+        time.sleep(1.5)
 
     # Aggregate by category
     by_cat = {}

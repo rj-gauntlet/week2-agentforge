@@ -139,6 +139,11 @@
 - [x] **Run full eval suite:** Record pass rate; fix critical failures if time allows.
 - [x] **Early submission checkpoint:** Confirm eval framework + observability are done and documented. (APPROVED)
 
+### Stretch Goals (Early Submission)
+
+- [ ] **Host OpenEMR:** Deploy OpenEMR on Railway so it is publicly available.
+- [ ] **Revamp App UI:** Completely redesign the frontend UI for a better user experience.
+
 ---
 
 ## Day 5 — Verification + Performance + Iteration
@@ -147,13 +152,14 @@
 
 ### Morning
 
-- [ ] **Verification polish:** Ensure 3+ verification types are wired and tested. Document in Agent Architecture Doc draft.
-- [ ] **Performance:** Measure latency (single-tool <5s, multi-step <15s); tool success rate; address bottlenecks.
+- [x] **Jailbreak Prevention:** Fortify the system prompt and input verification to strictly enforce the clinical persona (e.g., prevent "talk like a pirate" or other role-playing prompt injections).
+- [x] **Verification polish:** Ensure 3+ verification types are wired and tested. Document in Agent Architecture Doc draft.
+- [x] **Performance:** Measure latency (single-tool <5s, multi-step <15s); tool success rate; address bottlenecks.
 
 ### Afternoon
 
-- [ ] **Eval iteration:** Fix failures from Day 4 run; improve tool selection and error handling. Re-run suite.
-- [ ] **Safety & consistency:** Add or tighten tests for safety and consistency; target >80% eval pass rate.
+- [x] **Eval iteration:** Fix failures from Day 4 run; improve tool selection and error handling. Re-run suite.
+- [x] **Safety & consistency:** Add or tighten tests for safety and consistency; target >80% eval pass rate.
 
 ### Evening
 
@@ -202,6 +208,10 @@
 
 - [ ] **Submit:** All links and files per course instructions.
 - [ ] **Interview prep:** Review PRD “Interview Prep”; rehearse framework choice, tool design, verification, evals, scaling.
+
+### Stretch Goals (Final Submission)
+
+- [ ] **Extra Hero Tools:** Implement 1 or 2 more complex, high-value tools (e.g., lab result interpretation, contraindication checking).
 
 ---
 

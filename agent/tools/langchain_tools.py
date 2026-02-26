@@ -24,33 +24,46 @@ def _result_to_string(result: dict) -> str:
 
 
 def _drug_interaction_invoke(medications: list[str]) -> str:
-    out = drug_interaction_check(medications=medications)
-    return _result_to_string(out)
-
+    try:
+        out = drug_interaction_check(medications=medications)
+        return _result_to_string(out)
+    except Exception as e:
+        return f"Error executing tool: {str(e)}. Please check your arguments and try again."
 
 def _symptom_lookup_invoke(symptoms: list[str]) -> str:
-    out = symptom_lookup(symptoms=symptoms)
-    return _result_to_string(out)
-
+    try:
+        out = symptom_lookup(symptoms=symptoms)
+        return _result_to_string(out)
+    except Exception as e:
+        return f"Error executing tool: {str(e)}. Please check your arguments and try again."
 
 def _provider_search_invoke(specialty: str, location: str) -> str:
-    out = provider_search(specialty=specialty, location=location)
-    return _result_to_string(out)
-
+    try:
+        out = provider_search(specialty=specialty, location=location)
+        return _result_to_string(out)
+    except Exception as e:
+        return f"Error executing tool: {str(e)}. Please check your arguments and try again."
 
 def _appointment_availability_invoke(provider_id: str, date_range: str) -> str:
-    out = appointment_availability(provider_id=provider_id, date_range=date_range)
-    return _result_to_string(out)
-
+    try:
+        out = appointment_availability(provider_id=provider_id, date_range=date_range)
+        return _result_to_string(out)
+    except Exception as e:
+        return f"Error executing tool: {str(e)}. Please check your arguments and try again."
 
 def _insurance_coverage_invoke(procedure_code: str, plan_id: str) -> str:
-    out = insurance_coverage_check(procedure_code=procedure_code, plan_id=plan_id)
-    return _result_to_string(out)
-
+    try:
+        out = insurance_coverage_check(procedure_code=procedure_code, plan_id=plan_id)
+        return _result_to_string(out)
+    except Exception as e:
+        return f"Error executing tool: {str(e)}. Please check your arguments and try again."
 
 def _procedure_lookup_invoke(query: str) -> str:
-    out = procedure_lookup(query=query)
-    return _result_to_string(out)
+    try:
+        out = procedure_lookup(query=query)
+        return _result_to_string(out)
+    except Exception as e:
+        return f"Error executing tool: {str(e)}. Please check your arguments and try again."
 
 
 # LangChain tools with descriptions and schemas for the LLM

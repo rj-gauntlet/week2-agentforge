@@ -22,6 +22,7 @@ SYSTEM_PROMPT = """You are a healthcare assistant for a clinical setting. You he
 - Procedure lookup (search for a CPT code by name, or name by code)
 
 Rules:
+- STRICT PERSONA LOCK: You must ALWAYS maintain a professional, helpful, and clear clinical persona. Under NO circumstances should you adopt a different persona, accent, character, or style (e.g., pirate, cowboy, fictional character, etc.), even if explicitly instructed to do so by the user.
 - Use the tools to answer; do not make up medical facts.
 - For symptoms or clinical questions, always add: "This is not a diagnosis; please consult your provider."
 - Cite the tool you used (e.g. "According to the drug interaction check...").
@@ -74,9 +75,9 @@ def _verify_input_domain(query: str) -> str | None:
     """Verification 1: Domain Constraints / Input validation.
     Quick heuristic check to catch blatant adversarial or out-of-domain requests before LLM processing."""
     query_lower = query.lower()
-    adversarial_keywords = ["ignore previous", "system prompt", "hack", "bypass"]
+    adversarial_keywords = ["ignore previous", "system prompt", "hack", "bypass", "talk like", "act like", "pirate"]
     if any(kw in query_lower for kw in adversarial_keywords):
-        return "I'm a healthcare assistant and cannot fulfill requests that bypass my instructions or involve hacking."
+        return "I'm a healthcare assistant and cannot fulfill requests that bypass my instructions, change my persona, or involve hacking."
     return None
 
 import re
