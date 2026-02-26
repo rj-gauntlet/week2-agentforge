@@ -11,7 +11,7 @@
 |-------|----------|--------|
 | **Pre-Search** | 2 hours | Architecture, stack, plan — no code yet |
 | **MVP** | 24 hours (Tuesday) | Basic agent, 3+ tools, deployed, 5+ evals |
-| **Early submission** | Friday (Day 4) | Eval framework + observability in place |
+| **Early submission** | Friday 12:00 PM CT | Eval framework + observability in place |
 | **Final** | Sunday (Day 7) | Production-ready + open source + all deliverables |
 
 ---
@@ -165,6 +165,7 @@
 
 - [ ] **Cost tracking:** Start logging actual dev/test token usage and API costs for AI Cost Analysis.
 - [ ] **Agent Architecture Doc:** First full draft (domain, architecture, verification, eval results, observability, open source plan).
+- [ ] **Stretch Goals:** (Since we are ahead of schedule, we will begin pulling forward Day 6 tasks or addressing the early submission stretch goals like Railway deployment or UI revamps).
 
 ---
 
