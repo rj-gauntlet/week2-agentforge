@@ -158,8 +158,8 @@
 
 ### Afternoon
 
-- [ ] **Eval iteration:** Fix failures from Day 4 run; improve tool selection and error handling. Re-run suite.
-- [ ] **Safety & consistency:** Add or tighten tests for safety and consistency; target >80% eval pass rate.
+- [x] **Eval iteration:** Fix failures from Day 4 run; improve tool selection and error handling. Re-run suite.
+- [x] **Safety & consistency:** Add or tighten tests for safety and consistency; target >80% eval pass rate.
 
 ### Evening
 
