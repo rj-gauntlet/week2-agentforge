@@ -139,6 +139,11 @@
 - [x] **Run full eval suite:** Record pass rate; fix critical failures if time allows.
 - [x] **Early submission checkpoint:** Confirm eval framework + observability are done and documented. (APPROVED)
 
+### Stretch Goals (Early Submission)
+
+- [ ] **Host OpenEMR:** Deploy OpenEMR on Railway so it is publicly available.
+- [ ] **Revamp App UI:** Completely redesign the frontend UI for a better user experience.
+
 ---
 
 ## Day 5 — Verification + Performance + Iteration
