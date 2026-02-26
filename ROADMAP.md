@@ -154,7 +154,7 @@
 
 - [x] **Jailbreak Prevention:** Fortify the system prompt and input verification to strictly enforce the clinical persona (e.g., prevent "talk like a pirate" or other role-playing prompt injections).
 - [x] **Verification polish:** Ensure 3+ verification types are wired and tested. Document in Agent Architecture Doc draft.
-- [ ] **Performance:** Measure latency (single-tool <5s, multi-step <15s); tool success rate; address bottlenecks.
+- [x] **Performance:** Measure latency (single-tool <5s, multi-step <15s); tool success rate; address bottlenecks.
 
 ### Afternoon
 
