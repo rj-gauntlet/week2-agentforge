@@ -40,18 +40,56 @@ def extract_tools_used(messages):
     return out
 
 
+def extract_tool_outputs(messages):
+    """
+    From run_agent() result messages, return dict: tool_name -> list of parsed output dicts.
+    Each tool may be called multiple times; we collect all outputs (LLM sees JSON string from our tools).
+    """
+    tool_outputs_by_id = {}
+    for m in messages or []:
+        is_tool_msg = (
+            getattr(m, "type", None) == "tool"
+            or (getattr(m, "__class__", None) and getattr(m.__class__, "__name__", None) == "ToolMessage")
+            or (getattr(m, "tool_call_id", None) is not None and getattr(m, "content", None) is not None)
+        )
+        if is_tool_msg:
+            c = getattr(m, "content", None)
+            tid = getattr(m, "tool_call_id", None)
+            if tid is not None:
+                try:
+                    data = json.loads(c) if isinstance(c, str) else c
+                    tool_outputs_by_id[tid] = data if isinstance(data, dict) else {}
+                except (TypeError, json.JSONDecodeError):
+                    tool_outputs_by_id[tid] = {}
+    # Map tool_call_id -> tool name from AIMessage tool_calls
+    id_to_name = {}
+    for m in messages or []:
+        if hasattr(m, "tool_calls") and m.tool_calls:
+            for tc in m.tool_calls:
+                id_to_name[tc.get("id")] = tc.get("name")
+    # Build tool_name -> [output1, output2, ...]
+    by_name = {}
+    for tid, data in tool_outputs_by_id.items():
+        name = id_to_name.get(tid)
+        if name:
+            by_name.setdefault(name, []).append(data)
+    return by_name
+
+
 def run_one_case(case, run_agent_fn):
     """Run a single eval case; return dict with passed, output, tools_used, error, checks."""
     query = case.get("query", "")
     expected_tools = set(case.get("expected_tools") or [])
     expected_contains = case.get("expected_output_contains") or []
     expected_flags = case.get("expected_flags") or {}
+    expected_tool_output = case.get("expected_tool_output") or {}
 
     result = run_agent_fn(query)
     output = (result.get("output") or "").strip()
     err = result.get("error")
     messages = result.get("messages") or []
     tools_used = extract_tools_used(messages)
+    tool_outputs = extract_tool_outputs(messages)
 
     # Check 1: expected tools (all must be present)
     tools_ok = expected_tools.issubset(set(tools_used)) if expected_tools else True
@@ -70,7 +108,20 @@ def run_one_case(case, run_agent_fn):
         output_lower = output.lower()
         flags_ok = any(p in output_lower for p in safe_phrases)
 
-    passed = tools_ok and output_ok and flags_ok and not err
+    # Check 4: expected_tool_output (structured tool return values, e.g. insurance_coverage_check.covered)
+    tool_output_ok = True
+    if expected_tool_output:
+        for tool_name, expected_subset in expected_tool_output.items():
+            outputs = tool_outputs.get(tool_name, [])
+            match = any(
+                all(out.get(k) == v for k, v in expected_subset.items())
+                for out in outputs
+            )
+            if not match:
+                tool_output_ok = False
+                break
+
+    passed = tools_ok and output_ok and flags_ok and tool_output_ok and not err
     return {
         "query": query,
         "category": case.get("category", "unknown"),
@@ -78,6 +129,7 @@ def run_one_case(case, run_agent_fn):
         "tools_ok": tools_ok,
         "output_ok": output_ok,
         "flags_ok": flags_ok,
+        "tool_output_ok": tool_output_ok,
         "no_error": not bool(err),
         "tools_used": tools_used,
         "expected_tools": list(expected_tools),
@@ -123,18 +175,27 @@ def main():
     print(f"\n--- Overall: {passed_total}/{total} ({overall_rate:.1f}%) ---")
 
     # Save results for regression / observability
-    out_path = os.path.join(ROOT, "data", "eval_results_latest.json")
+    run_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     payload = {
-        "run_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "run_at": run_at,
         "total": total,
         "passed": passed_total,
         "pass_rate_pct": round(overall_rate, 1),
         "by_category": {c: {"total": s["total"], "passed": s["passed"], "pass_rate_pct": round((s["passed"] / s["total"] * 100) if s["total"] else 0, 1)} for c, s in by_cat.items()},
         "results": results,
     }
+    out_dir = os.path.join(ROOT, "data", "eval_results")
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(ROOT, "data", "eval_results_latest.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
+    # Historical copy for regression tracking (timestamped, not overwritten)
+    stamp = run_at.replace(":", "-").replace(".", "-")[:19]
+    history_path = os.path.join(out_dir, f"eval_{stamp}Z.json")
+    with open(history_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
     print(f"\nResults written to {out_path}")
+    print(f"History copy: {history_path}")
 
     return 0 if passed_total == total else 1
 

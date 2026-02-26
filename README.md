@@ -69,7 +69,8 @@ See [TESTING.md](./TESTING.md) for TDD and detailed instructions.
 Per the MVP requirements, this project includes a robust suite of end-to-end evaluation tests that verify the agent's ability to reason, call tools, and handle multi-step chains.
 
 **Eval dataset:** [data/eval_cases.json](./data/eval_cases.json) — cases by category (happy_path, edge_case, adversarial, multi_step).  
-**Eval harness:** [scripts/run_eval_harness.py](./scripts/run_eval_harness.py) — automated runner; writes pass/fail to [data/eval_results_latest.json](./data/eval_results_latest.json).
+**Eval harness:** [scripts/run_eval_harness.py](./scripts/run_eval_harness.py) — automated runner; writes pass/fail to [data/eval_results_latest.json](./data/eval_results_latest.json) and a timestamped copy under `data/eval_results/` for history.  
+**Full eval guide:** [EVAL.md](./EVAL.md) — dataset format, how to run, and observability.
 
 **To run the eval harness (full dataset, recommended):**
 1. Ensure your `.env` has `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`.
@@ -86,7 +87,9 @@ Per the MVP requirements, this project includes a robust suite of end-to-end eva
 ```
 (Skips tests that require an API key if none is set.)
 
-**Eval dataset format** (`data/eval_cases.json`): each case is an object with `category` (e.g. `happy_path`, `edge_case`, `adversarial`, `multi_step`), `query`, `expected_tools` (list of tool names that must be invoked), `expected_output_contains` (list of phrases; at least one must appear in the agent reply), and optional `expected_flags` (e.g. `{"can_diagnose": false}` to require a consult-provider disclaimer).
+**Eval dataset format** (`data/eval_cases.json`): each case is an object with `category`, `query`, `expected_tools`, `expected_output_contains`, and optional:
+- `expected_flags` (e.g. `{"can_diagnose": false}` to require a consult-provider disclaimer)
+- `expected_tool_output` — structured assertions on tool return values (e.g. `{"insurance_coverage_check": {"covered": false}}`) so evals don't depend on exact wording. The harness checks that the named tool's returned JSON includes the given key-value pairs.
 
 ---
 

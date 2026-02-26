@@ -109,6 +109,60 @@ def test_run_one_case_fail_output():
     assert r["output_ok"] is False
 
 
+def test_run_one_case_expected_tool_output_passed():
+    """Harness passes when structured tool output matches expected_tool_output."""
+    class FakeAIMsg:
+        tool_calls = [{"id": "call_1", "name": "insurance_coverage_check"}]
+    class FakeToolMsg:
+        tool_call_id = "call_1"
+        content = '{"covered": false, "details": "No coverage found."}'
+
+    def mock_run(query):
+        return {
+            "output": "Plan does not cover that procedure.",
+            "messages": [FakeAIMsg(), FakeToolMsg()],
+            "error": None,
+        }
+
+    case = {
+        "query": "Does plan_001 cover a knee replacement?",
+        "category": "multi_step",
+        "expected_tools": ["insurance_coverage_check"],
+        "expected_output_contains": ["procedure"],
+        "expected_tool_output": {"insurance_coverage_check": {"covered": False}},
+    }
+    r = run_one_case(case, mock_run)
+    assert r["passed"] is True
+    assert r["tool_output_ok"] is True
+
+
+def test_run_one_case_expected_tool_output_fail():
+    """Harness fails when structured tool output does not match expected_tool_output."""
+    class FakeAIMsg:
+        tool_calls = [{"id": "call_1", "name": "insurance_coverage_check"}]
+    class FakeToolMsg:
+        tool_call_id = "call_1"
+        content = '{"covered": true, "details": "Covered."}'
+
+    def mock_run(query):
+        return {
+            "output": "Yes, it is covered.",
+            "messages": [FakeAIMsg(), FakeToolMsg()],
+            "error": None,
+        }
+
+    case = {
+        "query": "Does plan_001 cover 99213?",
+        "category": "happy_path",
+        "expected_tools": ["insurance_coverage_check"],
+        "expected_output_contains": ["covered"],
+        "expected_tool_output": {"insurance_coverage_check": {"covered": False}},
+    }
+    r = run_one_case(case, mock_run)
+    assert r["passed"] is False
+    assert r["tool_output_ok"] is False
+
+
 @pytest.mark.eval
 @pytest.mark.skipif(
     not (os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY")),

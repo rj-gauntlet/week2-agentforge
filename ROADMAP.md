@@ -102,20 +102,20 @@
 
 ### Morning
 
-- [ ] **Eval harness:** Automated runner for test cases (input, expected tool calls/output, pass/fail). Integrate with observability if supported (e.g. LangSmith Evals).
-- [ ] **Happy path:** Add happy-path cases toward 20+ total (can include original 5).
-- [ ] **Edge cases:** Add 5+ edge cases (missing data, boundaries, invalid input).
+- [x] **Eval harness:** Automated runner for test cases (input, expected tool calls/output, pass/fail). Integrate with observability if supported (e.g. LangSmith Evals).
+- [x] **Happy path:** Add happy-path cases toward 20+ total (can include original 5).
+- [x] **Edge cases:** Add 5+ edge cases (missing data, boundaries, invalid input).
 
 ### Afternoon
 
-- [ ] **Adversarial:** Add 5+ adversarial cases (prompt injection, bypass verification, harmful requests).
-- [ ] **Multi-step:** Add 5+ multi-step reasoning scenarios (expected tool chain + output).
-- [ ] **Baseline run:** Full eval run; record pass rate by category. Target >80% overall later.
+- [x] **Adversarial:** Add 5+ adversarial cases (prompt injection, bypass verification, harmful requests).
+- [x] **Multi-step:** Add 5+ multi-step reasoning scenarios (expected tool chain + output).
+- [x] **Baseline run:** Full eval run; record pass rate by category. Target >80% overall later.
 
 ### Evening
 
-- [ ] **Regression:** Ensure eval results are stored/historical (for “Eval results” in observability).
-- [ ] **Document:** Eval dataset format and how to run (for submission and open source).
+- [x] **Regression:** Ensure eval results are stored/historical (for “Eval results” in observability).
+- [x] **Document:** Eval dataset format and how to run (for submission and open source).
 
 ---
 
