@@ -135,7 +135,7 @@
 
 ### Evening
 
-- [ ] **Frontend feedback UI:** Add thumbs up/down buttons to the chat interface to hit the `/feedback` endpoint.
+- [x] **Frontend feedback UI:** Add thumbs up/down buttons to the chat interface to hit the `/feedback` endpoint.
 - [ ] **Run full eval suite:** Record pass rate; fix critical failures if time allows.
 - [ ] **Early submission checkpoint:** Confirm eval framework + observability are done and documented.
 
