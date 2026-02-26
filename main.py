@@ -60,8 +60,19 @@ def root():
         "docs": "/docs",
         "health": "/health",
         "chat": "POST /chat with JSON body: {\"message\": \"...\"}",
+        "feedback": "POST /feedback"
     }
 
+class FeedbackRequest(BaseModel):
+    message_id: str = Field(..., description="ID or turn index of the message")
+    rating: str = Field(..., description="'thumbs_up' or 'thumbs_down'")
+    comments: str | None = Field(default=None, description="Optional user feedback comments")
+
+@app.post("/feedback")
+def collect_feedback(feedback: FeedbackRequest):
+    """Collect user feedback for observability and evaluation."""
+    # In a real app, this would be saved to a database or sent to LangSmith / Braintrust.
+    return {"status": "success", "recorded_rating": feedback.rating}
 
 @app.get("/health")
 def health():

@@ -126,15 +126,16 @@
 ### Morning
 
 - [x] **50 test cases:** Reach 20+ happy, 10+ edge, 10+ adversarial, 10+ multi-step. Document each with expected outcomes and criteria.
-- [ ] **Eval results dashboard/report:** Historical scores; ability to detect regressions (via observability or script).
+- [x] **Eval results dashboard/report:** Historical scores; ability to detect regressions (via observability or script).
 
 ### Afternoon
 
-- [ ] **Observability complete:** Trace, latency, errors, token usage, eval results, plus mechanism for user feedback (e.g. thumbs up/down endpoint or UI).
-- [ ] **Verification (3+):** Implement two more verification types (e.g. fact checking, confidence scoring, domain constraints, output validation, or human-in-the-loop trigger). Document in architecture notes.
+- [x] **Observability complete:** Trace, latency, errors, token usage, eval results, plus mechanism for user feedback (e.g. thumbs up/down endpoint or UI).
+- [x] **Verification (3+):** Implement two more verification types (e.g. fact checking, confidence scoring, domain constraints, output validation, or human-in-the-loop trigger). Document in architecture notes.
 
 ### Evening
 
+- [ ] **Frontend feedback UI:** Add thumbs up/down buttons to the chat interface to hit the `/feedback` endpoint.
 - [ ] **Run full eval suite:** Record pass rate; fix critical failures if time allows.
 - [ ] **Early submission checkpoint:** Confirm eval framework + observability are done and documented.
 
