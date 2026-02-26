@@ -20,6 +20,9 @@ __pycache__/
 dist/
 build/
 
+# Eval harness output (regenerated each run)
+data/eval_results_latest.json
+
 # Pytest
 .pytest_cache/
 .coverage

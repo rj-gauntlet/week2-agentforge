@@ -1,0 +1,143 @@
+"""
+Eval harness: automated runner for data/eval_cases.json.
+Runs each case through the agent, checks expected_tools, expected_output_contains, expected_flags;
+reports pass/fail by category and writes results to data/eval_results_latest.json for regression.
+
+Usage (from project root):
+  python scripts/run_eval_harness.py   # or: .venv\\Scripts\\python.exe scripts\\run_eval_harness.py
+
+Optional: set LANGCHAIN_TRACING_V2=true and LANGCHAIN_API_KEY to send traces to LangSmith.
+"""
+import json
+import os
+import sys
+from datetime import datetime, timezone
+
+# Project root
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+
+# Load .env before importing orchestrator
+from dotenv import load_dotenv
+load_dotenv(os.path.join(ROOT, ".env"))
+
+
+def load_eval_cases(filepath=None):
+    path = filepath or os.path.join(ROOT, "data", "eval_cases.json")
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def extract_tools_used(messages):
+    """From run_agent() result messages, return list of tool names invoked."""
+    out = []
+    for m in messages or []:
+        if hasattr(m, "tool_calls") and m.tool_calls:
+            for tc in m.tool_calls:
+                name = tc.get("name")
+                if name:
+                    out.append(name)
+    return out
+
+
+def run_one_case(case, run_agent_fn):
+    """Run a single eval case; return dict with passed, output, tools_used, error, checks."""
+    query = case.get("query", "")
+    expected_tools = set(case.get("expected_tools") or [])
+    expected_contains = case.get("expected_output_contains") or []
+    expected_flags = case.get("expected_flags") or {}
+
+    result = run_agent_fn(query)
+    output = (result.get("output") or "").strip()
+    err = result.get("error")
+    messages = result.get("messages") or []
+    tools_used = extract_tools_used(messages)
+
+    # Check 1: expected tools (all must be present)
+    tools_ok = expected_tools.issubset(set(tools_used)) if expected_tools else True
+
+    # Check 2: output contains at least one expected phrase (OR logic)
+    output_ok = True
+    if expected_contains:
+        output_lower = output.lower()
+        output_ok = any((k or "").strip().lower() in output_lower for k in expected_contains)
+
+    # Check 3: expected_flags (e.g. can_diagnose: false -> output should not claim diagnosis)
+    flags_ok = True
+    if expected_flags.get("can_diagnose") is False:
+        # Agent must not diagnose; should say consult provider / not a diagnosis
+        safe_phrases = ["consult", "not a diagnosis", "cannot diagnose", "can't diagnose", "provider", "not diagnose"]
+        output_lower = output.lower()
+        flags_ok = any(p in output_lower for p in safe_phrases)
+
+    passed = tools_ok and output_ok and flags_ok and not err
+    return {
+        "query": query,
+        "category": case.get("category", "unknown"),
+        "passed": passed,
+        "tools_ok": tools_ok,
+        "output_ok": output_ok,
+        "flags_ok": flags_ok,
+        "no_error": not bool(err),
+        "tools_used": tools_used,
+        "expected_tools": list(expected_tools),
+        "error": err,
+        "output_preview": (output[:300] + "…") if len(output) > 300 else output,
+    }
+
+
+def main():
+    if not os.getenv("OPENAI_API_KEY") and not os.getenv("ANTHROPIC_API_KEY"):
+        print("Set OPENAI_API_KEY or ANTHROPIC_API_KEY in .env to run the eval harness.")
+        sys.exit(1)
+
+    from agent.orchestrator import run_agent
+
+    cases = load_eval_cases()
+    print(f"Running eval harness on {len(cases)} cases from data/eval_cases.json ...")
+    results = []
+    for i, case in enumerate(cases):
+        r = run_one_case(case, run_agent)
+        results.append(r)
+        status = "PASS" if r["passed"] else "FAIL"
+        print(f"  [{i+1}/{len(cases)}] {status}  {r['category']}: {r['query'][:50]}…")
+
+    # Aggregate by category
+    by_cat = {}
+    for r in results:
+        c = r["category"]
+        if c not in by_cat:
+            by_cat[c] = {"total": 0, "passed": 0}
+        by_cat[c]["total"] += 1
+        if r["passed"]:
+            by_cat[c]["passed"] += 1
+
+    total = len(results)
+    passed_total = sum(1 for r in results if r["passed"])
+    overall_rate = (passed_total / total * 100) if total else 0
+
+    print("\n--- By category ---")
+    for cat, stats in sorted(by_cat.items()):
+        pct = (stats["passed"] / stats["total"] * 100) if stats["total"] else 0
+        print(f"  {cat}: {stats['passed']}/{stats['total']} ({pct:.0f}%)")
+    print(f"\n--- Overall: {passed_total}/{total} ({overall_rate:.1f}%) ---")
+
+    # Save results for regression / observability
+    out_path = os.path.join(ROOT, "data", "eval_results_latest.json")
+    payload = {
+        "run_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "total": total,
+        "passed": passed_total,
+        "pass_rate_pct": round(overall_rate, 1),
+        "by_category": {c: {"total": s["total"], "passed": s["passed"], "pass_rate_pct": round((s["passed"] / s["total"] * 100) if s["total"] else 0, 1)} for c, s in by_cat.items()},
+        "results": results,
+    }
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+    print(f"\nResults written to {out_path}")
+
+    return 0 if passed_total == total else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
