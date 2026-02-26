@@ -14,6 +14,9 @@ load_dotenv(os.path.join(ROOT, ".env"))
 from agent.orchestrator import run_agent
 
 def measure_latency():
+    print("Warming up the agent with a dummy query...")
+    run_agent("Hi")  # Dummy query to load models, libraries, and establish network connections
+    
     print("Measuring agent latency...\n")
     
     # 1. Single-tool queries
