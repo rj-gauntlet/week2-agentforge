@@ -16,6 +16,8 @@ const PRESETS = [
   { label: "Find Provider", query: "Can you find me a cardiologist in Austin, TX?" },
   { label: "Check Schedule", query: "Any open slots for prov_001 next week?" },
   { label: "Verify Insurance", query: "Does plan plan_001 cover procedure 99213?" },
+  { label: "Interpret Labs", query: "Can you interpret these labs? Glucose 115, HDL 35, Potassium 4.0" },
+  { label: "Contraindication", query: "Can a patient with an active infection get a knee replacement?" },
 ];
 
 /** Format assistant text for display: preserve newlines and break list-like lines (multiple " - ") into separate lines. */
