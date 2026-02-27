@@ -3,6 +3,7 @@ FastAPI app for the healthcare agent. Run with:
   uvicorn main:app --reload
   uvicorn main:app --host 0.0.0.0 --port 8000  # for deployment
 """
+import os
 from typing import Any, Callable
 
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -16,8 +17,9 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 from agent.orchestrator import run_agent
 
-# Allowed origins for CORS (dev)
-CORS_ORIGINS = [
+# Allowed origins for CORS (dev + dynamic from env)
+env_origins = os.getenv("CORS_ORIGINS", "")
+CORS_ORIGINS = [o.strip() for o in env_origins.split(",")] if env_origins else [
     "http://localhost:5173", "http://localhost:5174", "http://localhost:5175",
     "http://127.0.0.1:5173", "http://127.0.0.1:5174", "http://127.0.0.1:5175",
 ]
