@@ -97,9 +97,19 @@ function App() {
   const effectiveInput = presetQuery ?? input;
 
   return (
-    <div className="app">
+    <div className={`app ${isSidebarOpen ? "" : "sidebar-closed"}`}>
       <aside className="sidebar">
-        <h3>AgentForge Clinical</h3>
+        <div className="sidebar-header-row">
+          <h3>AgentForge Clinical</h3>
+          <button 
+            className="sidebar-toggle" 
+            onClick={() => setIsSidebarOpen(false)}
+            aria-label="Collapse sidebar"
+            title="Collapse sidebar"
+          >
+            ◀
+          </button>
+        </div>
         <p className="subtitle">Your intelligent healthcare assistant.</p>
         <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "0.75rem" }}>
           Click to instantly send a query:
@@ -136,6 +146,16 @@ function App() {
       </aside>
 
       <main className="main">
+        {!isSidebarOpen && (
+          <button 
+            className="sidebar-toggle-open" 
+            onClick={() => setIsSidebarOpen(true)}
+            aria-label="Expand sidebar"
+            title="Expand sidebar"
+          >
+            ▶
+          </button>
+        )}
         <header className="header">
           <h1 className="title">
             <span>+</span>
