@@ -1,0 +1,25 @@
+{
+  "contraindications": [
+    {
+      "procedure_code": "27447",
+      "procedure_name": "Arthroplasty, knee, condyle and plateau",
+      "flagged_conditions": ["active infection", "severe heart disease", "uncontrolled diabetes"],
+      "flagged_medications": ["warfarin", "clopidogrel", "apixaban"],
+      "reason": "High risk of sepsis with active infection. Anticoagulants increase bleeding risk during major surgery."
+    },
+    {
+      "procedure_code": "45380",
+      "procedure_name": "Colonoscopy with biopsy",
+      "flagged_conditions": ["toxic megacolon", "fulminant colitis", "suspected perforation"],
+      "flagged_medications": ["warfarin", "heparin"],
+      "reason": "Risk of bowel perforation in severe colitis. Anticoagulants increase bleeding risk during biopsy."
+    },
+    {
+      "procedure_code": "93015",
+      "procedure_name": "Cardiovascular stress test",
+      "flagged_conditions": ["acute myocardial infarction", "unstable angina", "severe aortic stenosis", "acute pulmonary embolism"],
+      "flagged_medications": [],
+      "reason": "Testing can trigger life-threatening arrhythmias or exacerbate acute ischemia."
+    }
+  ]
+}

@@ -12,6 +12,8 @@ from agent.tools import (
     provider_search,
     appointment_availability,
     insurance_coverage_check,
+    lab_result_interpretation,
+    contraindication_check,
 )
 from agent.tools.procedure_lookup import procedure_lookup
 
@@ -65,6 +67,20 @@ def _procedure_lookup_invoke(query: str) -> str:
     except Exception as e:
         return f"Error executing tool: {str(e)}. Please check your arguments and try again."
 
+def _lab_result_interpretation_invoke(lab_values: dict) -> str:
+    try:
+        out = lab_result_interpretation(lab_values=lab_values)
+        return _result_to_string(out)
+    except Exception as e:
+        return f"Error executing tool: {str(e)}. Please check your arguments and try again."
+
+def _contraindication_check_invoke(procedure_code: str, patient_conditions: list = None, patient_medications: list = None) -> str:
+    try:
+        out = contraindication_check(procedure_code=procedure_code, patient_conditions=patient_conditions, patient_medications=patient_medications)
+        return _result_to_string(out)
+    except Exception as e:
+        return f"Error executing tool: {str(e)}. Please check your arguments and try again."
+
 
 # LangChain tools with descriptions and schemas for the LLM
 drug_interaction_tool = StructuredTool.from_function(
@@ -103,6 +119,18 @@ procedure_lookup_tool = StructuredTool.from_function(
     description="Search for a medical procedure by name to get its CPT code, or search by CPT code to get its name. Input: query (e.g., 'Knee Replacement' or '27447').",
 )
 
+lab_result_interpretation_tool = StructuredTool.from_function(
+    func=_lab_result_interpretation_invoke,
+    name="lab_result_interpretation",
+    description="Interpret lab results by checking them against standard medical reference ranges. Input: a dictionary of lab test names and numerical values (e.g. {'glucose': 110.5, 'a1c': 5.4}). Returns whether each result is normal, low, or high.",
+)
+
+contraindication_check_tool = StructuredTool.from_function(
+    func=_contraindication_check_invoke,
+    name="contraindication_check",
+    description="Check if a specific medical procedure is contraindicated based on a patient's conditions and medications. Input: procedure_code (e.g., '27447'), patient_conditions (list of strings, e.g., ['active infection']), patient_medications (list of strings, e.g., ['warfarin']).",
+)
+
 def get_langchain_tools():
     """Return list of LangChain tools for the agent."""
     return [
@@ -112,4 +140,6 @@ def get_langchain_tools():
         appointment_availability_tool,
         insurance_coverage_tool,
         procedure_lookup_tool,
+        lab_result_interpretation_tool,
+        contraindication_check_tool,
     ]
