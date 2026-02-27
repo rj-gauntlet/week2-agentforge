@@ -94,4 +94,7 @@ def appointment_availability(provider_id=None, date_range=None):
         if start_d <= slot_date <= end_d:
             filtered.append(s)
 
-    return tool_result(success=True, data={"slots": filtered})
+    return tool_result(
+        success=True,
+        data={"slots": filtered, "available": len(filtered) > 0},
+    )
