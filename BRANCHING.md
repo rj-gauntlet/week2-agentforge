@@ -8,7 +8,7 @@
 
 | Branch    | Purpose |
 |----------|---------|
-| **main** | Production / MVP approval. Deployed to Railway (API) and Streamlit Cloud (UI). **Do not push to `main` until MVP is approved.** |
+| **main** | Production / MVP approval. Deployed to Railway (API) and custom Web UI. **Do not push to `main` until MVP is approved.** |
 | **develop** | Day 2+ work: LangSmith, observability, voice assistant, etc. Merge into `main` after approval. |
 
 ---
@@ -30,7 +30,7 @@
    git merge develop
    git push origin main
    ```
-2. Railway and Streamlit will redeploy from `main` with the new features.
+2. Railway (and your Web UI deploy) will redeploy from `main` with the new features.
 
 ### If you need a hotfix on the live MVP (before approval)
 1. Create a short-lived branch from **main**, fix, merge back to **main**, push.

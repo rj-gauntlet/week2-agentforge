@@ -206,7 +206,7 @@
 | Observability | LangSmith |
 | Evals | LangSmith Evals (primary); custom runner where needed |
 | Backend | Python (FastAPI) — LangChain ecosystem; separate from OpenEMR PHP |
-| Frontend | Minimal: Streamlit or simple React/Next.js chat UI for demo |
+| Frontend | Minimal: React/Vite or simple React/Next.js chat UI for demo |
 | Deployment | Railway or Vercel or Modal |
 | Open source | Eval dataset (50+ cases) public release |
 

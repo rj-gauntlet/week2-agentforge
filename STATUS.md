@@ -17,7 +17,7 @@
 | 6 | Basic error handling | ✅ Done | try/except in `run_agent`; API returns 500 with detail on failure. |
 | 7 | ≥1 verification | ✅ Done | System prompt: no diagnosis, “consult your provider,” cite tool. |
 | 8 | 5+ test cases | ✅ Done | 5 eval cases + unit/integration; all 32 tests pass. |
-| 9 | **Deployed and publicly accessible** | ✅ Done | API Live on Railway. Custom Web UI on Streamlit Cloud. WhatsApp/SMS via Twilio. |
+| 9 | **Deployed and publicly accessible** | ✅ Done | API Live on Railway. Custom Web UI (React). WhatsApp/SMS via Twilio. |
 
 **MVP:** All 9 requirements complete! Plus multiple advanced user interfaces deployed. **(APPROVED)**
 
@@ -33,7 +33,7 @@
 
 - **Done:** Stack (Python/FastAPI), 5 tools, orchestrator, conversation history, error handling, verification (prompt), 5+ evals, local API.
 - **Done:** Deployed to Railway; public URL; smoke test passed.
-- **Done:** Front-End UIs Built: Streamlit Chat Interface and WhatsApp/SMS Twilio Bot.
+- **Done:** Front-End UIs Built: React Chat Interface and WhatsApp/SMS Twilio Bot.
 
 ### Day 2–4 — Observability, Evals, Verifications (Done) ✅
 
@@ -43,8 +43,8 @@
 
 ### Day 5+ — Performance, Docs & Final Submission
 
-- **Day 5:** Verification polish, performance tracking.
-- **Final Submission:** Voice Assistant implementation (via Twilio Voice or Web Speech API), Agent Architecture Doc, demo video, submission.
+- **Day 5:** UI completely revamped with React/Vite and 8-bit clinical theme. Decoupled architecture deployed to Railway.
+- **Final Submission:** Agent Architecture Doc, Cost Analysis, demo video, submission.
   - **IMPORTANT TODO:** Check if the Twilio `+18447342479` number has been approved for Toll-Free verification so it can be swapped out from the Sandbox number before final submission!
 
 ---

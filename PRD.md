@@ -214,7 +214,7 @@
 | Observability | LangSmith or Braintrust |
 | Evals | LangSmith Evals, Braintrust Evals, or custom |
 | Backend | Python/FastAPI or Node.js/Express |
-| Frontend | React, Next.js, or Streamlit |
+| Frontend | React (Vite), Next.js, or similar |
 | Deployment | Vercel, Railway, Modal, or cloud |
 
 **PRD decision rule:** Use whatever stack lets you ship. Pre-Search should lock these and document in submission.

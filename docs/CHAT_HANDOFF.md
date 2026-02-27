@@ -6,7 +6,7 @@ Use this in a **new chat** so the new agent has full context. You can say: *"Rea
 
 ## Project
 
-**AgentForge Healthcare** — LangChain agent with FastAPI backend, Streamlit UI, 5+ tools (drug interaction, symptom lookup, provider search, appointment availability, insurance coverage, procedure lookup). MVP is done; we're on **Day 3** of the roadmap. **Branch:** `develop` (kept separate until MVP is approved).
+**AgentForge Healthcare** — LangChain agent with FastAPI backend, React (Vite) UI, 5+ tools (drug interaction, symptom lookup, provider search, appointment availability, insurance coverage, procedure lookup). MVP is done; we're on **Day 3** of the roadmap. **Branch:** `develop` (kept separate until MVP is approved).
 
 ---
 
@@ -26,7 +26,7 @@ Use this in a **new chat** so the new agent has full context. You can say: *"Rea
 ### Key files
 - **Eval:** `data/eval_cases.json`, `scripts/run_eval_harness.py`, `EVAL.md`, `data/EVAL_TODO.md`, `data/eval_results/` (history).
 - **Tone rule:** `.cursor/rules/warm-conversational-tone.mdc` (warm, casual, Gemini-style; `alwaysApply: true`).
-- **Agent:** `agent/orchestrator.py`, `agent/tools/`, `main.py`, `streamlit_app.py`.
+- **Agent:** `agent/orchestrator.py`, `agent/tools/`, `main.py`. **UI:** `frontend/` (React/Vite).
 
 ### What the user asked last
 They wanted to start a **new chat** to spot-check that the warm-tone rule is applied, but not lose this conversation. This handoff gives the new agent this context so the conversation can continue where it left off.

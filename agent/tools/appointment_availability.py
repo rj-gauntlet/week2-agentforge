@@ -2,28 +2,53 @@
 Appointment availability: mock for MVP. Returns available slots for a provider in a date range.
 PRE_SEARCH: mock for sprint; production = OpenEMR scheduling API.
 """
-import json
-import os
 import re
+from datetime import datetime, timedelta
 
 from agent.tools.schemas import tool_result
 
-_DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "appointment_slots.json")
 
+def _generate_dynamic_slots():
+    """Generate dynamic mock appointment slots for a 14-day window from today."""
+    slots = []
+    today = datetime.now()
+    
+    # Providers and their typical schedules
+    schedules = {
+        "prov_001": [("09:00", "09:30"), ("10:00", "10:30"), ("14:00", "14:30")],
+        "prov_002": [("08:00", "08:30"), ("15:00", "15:30")],
+        "prov_003": [("09:00", "09:30"), ("11:00", "11:30")]
+    }
 
-def _load_slots():
-    """Load mock appointment slots from JSON."""
-    if not os.path.isfile(_DATA_PATH):
-        return []
-    with open(_DATA_PATH, encoding="utf-8") as f:
-        data = json.load(f)
-    return data.get("slots", [])
+    for day_offset in range(14):
+        current_day = today + timedelta(days=day_offset)
+        # Skip weekends for realism
+        if current_day.weekday() >= 5:
+            continue
+            
+        date_str = current_day.strftime("%Y-%m-%d")
+        
+        for provider_id, times in schedules.items():
+            for start_time, end_time in times:
+                # Add a bit of pseudo-randomness: skip some slots based on day
+                # So it's not totally uniform, just to make it more realistic
+                if (day_offset + hash(provider_id + start_time)) % 3 == 0:
+                    continue
+                    
+                slots.append({
+                    "provider_id": provider_id,
+                    "date": date_str,
+                    "start_time": start_time,
+                    "end_time": end_time
+                })
+                
+    return slots
 
 
 def _parse_date_range(date_range):
     """
     Parse date_range into (start_date, end_date) as strings YYYY-MM-DD.
-    Accepts: "2025-03-01" (single day) or "2025-03-01 to 2025-03-03" (range).
+    Accepts: "YYYY-MM-DD" (single day) or "YYYY-MM-DD to YYYY-MM-DD" (range).
     """
     if not date_range or not isinstance(date_range, str):
         return None, None
@@ -45,7 +70,7 @@ def appointment_availability(provider_id=None, date_range=None):
     """
     Get available appointment slots for a provider within a date range.
     Returns { success, data: { slots: [...] }?, error? }.
-    Mock: filters static list; production would query OpenEMR scheduling API.
+    Mock: filters dynamically generated schedule over the next 14 days.
     """
     if provider_id is None:
         return tool_result(success=False, error="provider_id is required")
@@ -60,7 +85,7 @@ def appointment_availability(provider_id=None, date_range=None):
     if start_d is None:
         return tool_result(success=False, error="date_range must be YYYY-MM-DD or 'YYYY-MM-DD to YYYY-MM-DD'")
 
-    slots = _load_slots()
+    slots = _generate_dynamic_slots()
     filtered = []
     for s in slots:
         if s.get("provider_id") != provider_id:

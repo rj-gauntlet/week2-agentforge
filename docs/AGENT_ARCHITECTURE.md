@@ -12,12 +12,12 @@ The agent's primary capabilities include:
 - Looking up medical procedure codes (CPT).
 
 ## 2. Architecture Overview
-The system is built using a LangChain agent orchestrator integrated with a FastAPI backend and a Streamlit frontend. 
+The system is built using a LangChain agent orchestrator integrated with a FastAPI backend and a React (Vite) web frontend. 
 
 - **Orchestrator (`agent/orchestrator.py`):** Manages the conversation flow, invokes the LLM (OpenAI GPT-4o or Anthropic Claude), and handles tool execution. It also enforces system prompts and verification steps.
 - **Tools (`agent/tools/`):** A suite of specialized Python functions that interact with mock data or external APIs to perform the agent's core capabilities.
 - **Backend (`main.py`):** A FastAPI application that exposes endpoints for chat (`/chat`), health checks (`/health`), and user feedback (`/feedback`).
-- **Frontend (`streamlit_app.py`):** A Streamlit-based web interface that provides a chat UI, displays tool usage, and collects user feedback.
+- **Frontend (`frontend/`):** A React (Vite + TypeScript) web app that provides the chat UI, displays tool usage, and collects user feedback. Deploy separately or with the API.
 
 ## 3. Verification & Safety
 

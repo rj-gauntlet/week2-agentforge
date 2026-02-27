@@ -46,6 +46,8 @@ def _get_model():
     )
 
 
+from datetime import datetime
+
 def _build_agent():
     """Build and cache the LangChain agent (model + tools + prompt)."""
     global _agent
@@ -55,7 +57,11 @@ def _build_agent():
     from agent.tools.langchain_tools import get_langchain_tools
     model = _get_model()
     tools = get_langchain_tools()
-    _agent = create_agent(model=model, tools=tools, system_prompt=SYSTEM_PROMPT)
+    
+    current_date = datetime.now().strftime("%B %d, %Y")
+    dynamic_system_prompt = SYSTEM_PROMPT + f"\n\nToday's date is {current_date}."
+    
+    _agent = create_agent(model=model, tools=tools, system_prompt=dynamic_system_prompt)
     return _agent
 
 
