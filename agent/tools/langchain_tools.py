@@ -3,8 +3,10 @@ LangChain tool wrappers for the orchestrator.
 Each tool calls our existing Python function and returns a string for the LLM.
 """
 import json
+from typing import Any, Dict
 
 from langchain_core.tools import StructuredTool
+from pydantic import BaseModel, Field
 
 from agent.tools import (
     drug_interaction_check,
@@ -67,8 +69,17 @@ def _procedure_lookup_invoke(query: str) -> str:
     except Exception as e:
         return f"Error executing tool: {str(e)}. Please check your arguments and try again."
 
+class LabResultInterpretationInput(BaseModel):
+    """Input for lab_result_interpretation: one object mapping lab test names to numeric values."""
+    lab_values: Dict[str, Any] = Field(
+        description="Map of lab test names to values, e.g. {'glucose': 115, 'hdl': 35, 'potassium': 4.0}"
+    )
+
 def _lab_result_interpretation_invoke(lab_values: dict) -> str:
+    """Interpret lab values against reference ranges. Receives a single dict of test name -> number."""
     try:
+        if not isinstance(lab_values, dict):
+            lab_values = {}
         out = lab_result_interpretation(lab_values=lab_values)
         return _result_to_string(out)
     except Exception as e:
@@ -122,7 +133,8 @@ procedure_lookup_tool = StructuredTool.from_function(
 lab_result_interpretation_tool = StructuredTool.from_function(
     func=_lab_result_interpretation_invoke,
     name="lab_result_interpretation",
-    description="Interpret lab results by checking them against standard medical reference ranges. Input: a dictionary of lab test names and numerical values (e.g. {'glucose': 110.5, 'a1c': 5.4}). Returns whether each result is normal, low, or high.",
+    description="Interpret lab results by checking them against standard medical reference ranges. Input: one object 'lab_values' mapping lab test names to numbers, e.g. lab_values: { glucose: 115, hdl: 35, potassium: 4.0 }. Returns whether each result is normal, low, or high.",
+    args_schema=LabResultInterpretationInput,
 )
 
 contraindication_check_tool = StructuredTool.from_function(

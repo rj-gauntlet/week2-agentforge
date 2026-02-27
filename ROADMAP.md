@@ -141,8 +141,8 @@
 
 ### Stretch Goals (Early Submission)
 
-- [ ] **Host OpenEMR:** Deploy OpenEMR on Railway so it is publicly available.
-- [ ] **Revamp App UI:** Completely redesign the frontend UI for a better user experience.
+- [x] **Deploy to Railway:** Deploy decoupled React Frontend and FastAPI Backend to Railway for public access.
+- [x] **Revamp App UI:** Completely redesign the frontend UI (React + Vite, 8-bit clinical theme) for a better user experience.
 
 ---
 
