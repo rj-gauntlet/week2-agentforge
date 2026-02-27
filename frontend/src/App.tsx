@@ -39,6 +39,7 @@ function App() {
   const [presetQuery, setPresetQuery] = useState<string | null>(null);
   const [showToolsUsed, setShowToolsUsed] = useState(true);
   const [showUserFeedback, setShowUserFeedback] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const turnRef = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
