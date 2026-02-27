@@ -150,7 +150,7 @@ def main():
     print(f"Running eval harness on {len(cases)} cases from data/eval_cases.json ...")
     results = []
     for i, case in enumerate(cases):
-        r = run_one_case(case, run_agent)
+        r = run_one_case(case, lambda q: run_agent(q, source="eval"))
         results.append(r)
         status = "PASS" if r["passed"] else "FAIL"
         print(f"  [{i+1}/{len(cases)}] {status}  {r['category']}: {r['query'][:50]}…")

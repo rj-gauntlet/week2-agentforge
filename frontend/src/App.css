@@ -231,6 +231,21 @@ html, body, #root {
   margin: 0.25rem 0 0 0;
 }
 
+.whatsapp-notice {
+  background-color: var(--color-green);
+  color: var(--color-bg);
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 1rem 1rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 2px solid var(--color-green);
+}
+
+.whatsapp-notice strong {
+  font-weight: bold;
+}
+
 .messages {
   flex: 1;
   overflow-y: auto;

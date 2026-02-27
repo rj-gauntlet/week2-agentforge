@@ -168,6 +168,12 @@ function App() {
           </p>
         </header>
 
+        <div className="whatsapp-notice">
+          <p>
+            <strong>Note:</strong> You can also interact with AgentForge via WhatsApp! Text us at <strong>+1 (415) 523-8886</strong> with the code <strong>join soon-vowel</strong> to connect.
+          </p>
+        </div>
+
         <div className="messages">
           {messages.map((msg, i) => (
             <div key={i} className={`message ${msg.role}`}>

@@ -23,6 +23,9 @@ build/
 # Eval harness output (regenerated each run)
 data/eval_results_latest.json
 
+# Cost tracking log (append-only; regenerate with usage)
+data/cost_log.jsonl
+
 # Pytest
 .pytest_cache/
 .coverage

@@ -163,9 +163,9 @@
 
 ### Evening
 
-- [ ] **Cost tracking:** Start logging actual dev/test token usage and API costs for AI Cost Analysis.
-- [ ] **Agent Architecture Doc:** First full draft (domain, architecture, verification, eval results, observability, open source plan).
-- [ ] **Stretch Goals:** (Since we are ahead of schedule, we will begin pulling forward Day 6 tasks or addressing the early submission stretch goals like Railway deployment or UI revamps).
+- [x] **Cost tracking:** Start logging actual dev/test token usage and API costs for AI Cost Analysis.
+- [x] **Agent Architecture Doc:** First full draft (domain, architecture, verification, eval results, observability, open source plan).
+- [x] **Stretch Goals:** (Since we are ahead of schedule, we will begin pulling forward Day 6 tasks or addressing the early submission stretch goals like Railway deployment or UI revamps).
 
 ---
 
@@ -181,12 +181,12 @@
 
 - [ ] **AI Cost Analysis:** Dev spend (tokens, calls, observability). Production table for 100 / 1K / 10K / 100K users with assumptions (queries per user, tokens, tool calls, verification).
 - [ ] **Agent Architecture Doc:** Finalize 1–2 pages (all sections from PRD template).
-- [ ] **README / setup guide:** Repo README with setup, architecture overview, deployed link.
+- [x] **README / setup guide:** Repo README with setup, architecture overview, deployed link.
 
 ### Evening
 
 - [ ] **Pre-Search doc:** Ensure Pre-Search checklist (Phases 1–3) is saved and referenced in submission.
-- [ ] **Final eval run:** 50+ cases with results; save as deliverable (and for open source if releasing dataset).
+- [x] **Final eval run:** 50+ cases with results; save as deliverable (and for open source if releasing dataset).
 
 ---
 
@@ -212,7 +212,7 @@
 
 ### Stretch Goals (Final Submission)
 
-- [ ] **Extra Hero Tools:** Implement 1 or 2 more complex, high-value tools (e.g., lab result interpretation, contraindication checking).
+- [x] **Extra Hero Tools:** Implement 1 or 2 more complex, high-value tools (e.g., lab result interpretation, contraindication checking).
 
 ---
 

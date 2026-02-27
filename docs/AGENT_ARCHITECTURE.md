@@ -1,57 +1,107 @@
-# Agent Architecture Document
+# AgentForge — Agent Architecture Document
 
-## 1. Domain & Purpose
-This agent serves as a healthcare assistant for a clinical setting. It is designed to assist users with specific clinical and administrative tasks while strictly adhering to safety guidelines and avoiding medical diagnosis or dosing advice.
+**Version:** 1.0 (first draft)  
+**Purpose:** Domain, architecture, verification, eval results, observability, and open source plan for submission and future maintenance.  
+**Reference:** [PRD.md](../PRD.md), [PRE_SEARCH.md](../PRE_SEARCH.md), [ROADMAP.md](../ROADMAP.md).
 
-The agent's primary capabilities include:
-- Checking drug interactions.
-- Looking up symptoms (providing possible conditions and urgency, not diagnoses).
-- Searching for healthcare providers by specialty and location.
-- Checking appointment availability.
-- Verifying insurance coverage for procedures.
-- Looking up medical procedure codes (CPT).
+---
 
-## 2. Architecture Overview
-The system is built using a LangChain agent orchestrator integrated with a FastAPI backend and a React (Vite) web frontend. 
+## 1. Domain & Use Cases
 
-- **Orchestrator (`agent/orchestrator.py`):** Manages the conversation flow, invokes the LLM (OpenAI GPT-4o or Anthropic Claude), and handles tool execution. It also enforces system prompts and verification steps.
-- **Tools (`agent/tools/`):** A suite of specialized Python functions that interact with mock data or external APIs to perform the agent's core capabilities.
-- **Backend (`main.py`):** A FastAPI application that exposes endpoints for chat (`/chat`), health checks (`/health`), and user feedback (`/feedback`).
-- **Frontend (`frontend/`):** A React (Vite + TypeScript) web app that provides the chat UI, displays tool usage, and collects user feedback. Deploy separately or with the API.
+**Domain:** Healthcare (OpenEMR-aligned). The agent is a clinical/admin assistant for a practice setting, not a diagnostic or prescribing system.
 
-## 3. Verification & Safety
+**Problems solved:**
 
-To ensure the agent operates safely and securely within its defined domain, we have implemented a multi-layered verification system. These checks occur both before the user's query is sent to the LLM and after the LLM generates a response.
+- **Drug interaction checks** — “Do aspirin and ibuprofen interact?” → severity and guidance; no dosing.
+- **Symptom lookup** — Possible conditions and urgency only; never diagnoses; always “consult your provider.”
+- **Provider search** — By specialty and location (e.g. pediatrician in Austin, TX).
+- **Appointment availability** — Slots for a provider in a date range (14-day rolling window; mock for sprint).
+- **Insurance coverage** — Procedure code + plan ID → covered or not, details.
+- **Procedure lookup** — CPT code by name or name by code.
+- **Lab result interpretation** — User-provided values (e.g. glucose, HDL) checked against reference ranges; disclaimer required.
+- **Contraindication check** — Procedure code + conditions/medications → safe or flagged issues.
 
-### 3.1 Pre-LLM Verification (Input Checks)
+**Scope boundaries:** No diagnosis, no dosing advice, no prescription. All clinical-style answers cite tools and include a provider-consult disclaimer where appropriate. Out-of-domain or adversarial requests are refused.
 
-*   **Input Domain & Jailbreak Prevention (`_verify_input_domain`):**
-    *   **Purpose:** To catch blatant adversarial requests, prompt injections, or attempts to force the agent out of its clinical persona.
-    *   **Mechanism:** A heuristic check that scans the user's input for forbidden keywords (e.g., "ignore previous", "system prompt", "hack", "bypass", "talk like", "act like", "pirate").
-    *   **Action:** If triggered, the system immediately rejects the request with a standard refusal message before invoking the LLM.
+---
 
-*   **PHI Redaction (`_verify_phi_redaction`):**
-    *   **Purpose:** To protect sensitive Protected Health Information (PHI) and Personally Identifiable Information (PII) from being sent to external LLM APIs.
-    *   **Mechanism:** Regular expressions are used to identify and mask sensitive patterns in the user's query.
-        *   Social Security Numbers (SSNs) are replaced with `[REDACTED SSN]`.
-        *   Phone numbers are replaced with `[REDACTED PHONE]`.
-        *   Dates of Birth (only when preceded by keywords like "DOB" or "born on" to avoid redacting appointment dates) are replaced with `[REDACTED DOB]`.
-    *   **Action:** The sanitized query is passed to the LLM.
+## 2. Agent Architecture
 
-### 3.2 Post-LLM Verification (Output Checks)
+**Framework:** LangChain. Single agent with tool-calling and in-memory conversation history.
 
-*   **Fact-Checking Against Tool Output (`_verify_fact_check`):**
-    *   **Purpose:** To detect and mitigate LLM hallucinations, specifically ensuring the LLM does not exaggerate or misrepresent the data returned by the tools.
-    *   **Mechanism:** After the LLM generates a response, the system reviews the tool messages from that turn. For example, if the `drug_interaction_check` tool returned a "minor" severity, but the LLM's output contains words like "fatal" or "major", a hallucination is suspected.
-    *   **Action:** If a contradiction is found, a warning message is appended to the LLM's output: `\n\n(Fact-Check Error: The LLM severity description contradicts the tool's 'minor' rating. Please verify.)`
+**Flow:**
 
-*   **Output Safety & Clinical Disclaimer (`_verify_output_safety`):**
-    *   **Purpose:** To ensure that any discussion of clinical topics includes a mandatory medical disclaimer.
-    *   **Mechanism:** The system scans the LLM's final output for clinical keywords (e.g., "symptom", "treatment", "diagnosis", "condition", "pain", "medication").
-    *   **Action:** If clinical keywords are found and the output does not already contain a disclaimer, the system appends: `\n\n[Disclaimer: This information is for educational purposes and is not a medical diagnosis. Please consult a healthcare provider.]`
+1. User message (and optional chat history) → orchestrator.
+2. Input verification (domain check, PHI redaction) before the LLM.
+3. Messages (system + history + user) → LangChain agent `invoke()`; model chooses tools and arguments.
+4. Tool executions return structured JSON; agent may chain multiple tools (e.g. procedure_lookup → insurance_coverage_check).
+5. Final assistant message extracted; then output verification (safety disclaimer, fact-check vs tool output).
+6. Token usage extracted from AIMessages and logged for cost analysis.
 
-## 4. Evaluation & Observability
-*(To be completed)*
+**Components:**
 
-## 5. Open Source Plan
-*(To be completed)*
+| Component | Implementation |
+|-----------|----------------|
+| **Reasoning engine** | LLM (OpenAI GPT-4o or Anthropic Claude Sonnet) via LangChain; temperature 0. |
+| **Tool registry** | Eight tools in `agent/tools/`: drug_interaction_check, symptom_lookup, provider_search, appointment_availability, insurance_coverage_check, procedure_lookup, lab_result_interpretation, contraindication_check. Each has schema + description; wrappers in `langchain_tools.py` return JSON strings from shared `tool_result(success, data?, error?)`. |
+| **Memory** | Conversation history passed per request (list of `{role, content}`); no persistent user store. |
+| **Orchestrator** | `agent/orchestrator.py`: `run_agent(query, chat_history, source)` builds agent, runs invoke, runs verification, logs cost, returns output + messages + usage. |
+| **Verification layer** | See §3. |
+| **Cost tracking** | `agent/cost_logging.py`: extracts usage from AIMessage `usage_metadata` (or `response_metadata`), estimates USD, appends to `data/cost_log.jsonl` with `source` (api | eval). |
+
+**Tool data sources (sprint):** Drug interactions and procedures from static JSON; providers, appointments (dynamic 14-day mock), coverage, symptoms, contraindications from JSON/data. Production path: replace with OpenEMR FHIR, scheduling, and billing APIs where applicable.
+
+---
+
+## 3. Verification Strategy
+
+Four types are implemented and used on every request where applicable:
+
+| # | Type | What it does |
+|---|------|----------------|
+| 1 | **Domain constraints / input validation** | Heuristic check for adversarial phrases (“ignore previous”, “system prompt”, “hack”, “talk like a pirate”); short-circuits with refusal before LLM. |
+| 2 | **Output safety / disclaimer** | If output contains clinical keywords (e.g. headache, fever, symptom, diagnose) but no “not a diagnosis” / “consult your provider”, appends a standard disclaimer. |
+| 3 | **PHI redaction** | Redacts SSN, phone numbers, and DOB-like patterns in user input before sending to the LLM. |
+| 4 | **Fact-check vs tool output** | If drug_interaction_check was used and tool said “minor”, but the model’s reply says “fatal” or “major”, appends a fact-check warning. |
+
+Persona lock is enforced in the system prompt: no adopting other personas or styles. Lab interpretation is explicitly instructed to use the tool and add the consult-provider disclaimer.
+
+---
+
+## 4. Eval Results
+
+**Harness:** `scripts/run_eval_harness.py` loads `data/eval_cases.json`, runs each case through `run_agent(..., source="eval")`, and checks expected tools, output phrases (OR), optional flags, and optional `expected_tool_output` (e.g. `appointment_availability.available`, `contraindication_check.safe`). Results written to `data/eval_results_latest.json` and a timestamped copy under `data/eval_results/`.
+
+**Dataset:** 56 test cases.
+
+| Category | Count | Pass rate (latest) |
+|----------|--------|---------------------|
+| Happy path | 25 | 100% |
+| Multi-step | 11 | 100% |
+| Edge case | 10 | 100% |
+| Adversarial | 10 | 100% |
+| **Overall** | **56** | **100%** |
+
+**Criteria:** Correct tool(s) invoked; at least one of `expected_output_contains` in reply; optional `expected_flags` (e.g. no-diagnosis) and `expected_tool_output` (structured tool fields) satisfied. Failures are recorded in the results JSON for regression and analysis.
+
+**Reference:** [EVAL.md](../EVAL.md) for dataset format and how to run.
+
+---
+
+## 5. Observability Setup
+
+**LangSmith:** With `LANGCHAIN_TRACING_V2=true` and `LANGCHAIN_API_KEY` in `.env`, every `run_agent()` produces a trace: input → model → tool calls (inputs/outputs) → final reply. Dashboard shows latency, token usage, and errors. See [LANGSMITH.md](../LANGSMITH.md).
+
+**Cost log:** Each API and eval run that uses the LLM appends a line to `data/cost_log.jsonl`: timestamp, source (api | eval), model_hint, input_tokens, output_tokens, total_tokens, estimated_usd, query_preview. Pricing assumptions (e.g. $2.50/$10 per 1M for GPT-4o, $3/$15 for Claude) are in `agent/cost_logging.py` and can be updated for AI Cost Analysis and production projections.
+
+**Feedback:** Frontend thumbs up/down call `POST /feedback`; can be wired to observability or analytics for iteration.
+
+---
+
+## 6. Open Source Contribution
+
+**Planned:** Release the **eval dataset** (50+ cases: anonymized queries, expected tools, expected output constraints) as a public artifact so others can benchmark healthcare/OpenEMR-style agents. Format and run instructions are in [EVAL.md](../EVAL.md) and the repo. Alternative if time allows: a small reusable tool package (e.g. “OpenEMR agent tools”). Licensing: match repo (e.g. GPL for code); dataset under permissive license (CC-BY or MIT).
+
+---
+
+*This document is the first full draft for the Agent Architecture deliverable. Finalize in Day 6 and reference in submission.*

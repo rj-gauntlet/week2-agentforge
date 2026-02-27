@@ -144,6 +144,7 @@ def _verify_output_safety(output: str) -> str:
 def run_agent(
     query: str,
     chat_history: list[dict[str, str]] | None = None,
+    source: str = "api",
 ) -> dict[str, Any]:
     """
     Run the agent on a user query with optional conversation history.
@@ -175,6 +176,28 @@ def run_agent(
         }
 
     out_messages = result.get("messages", [])
+
+    # Cost tracking: log token usage for AI Cost Analysis
+    try:
+        from agent.cost_logging import (
+            extract_usage_from_messages,
+            get_model_hint,
+            log_run,
+        )
+        usage = extract_usage_from_messages(out_messages, model_hint=get_model_hint())
+        if usage.get("total_tokens", 0) > 0:
+            log_run(
+                input_tokens=usage["input_tokens"],
+                output_tokens=usage["output_tokens"],
+                total_tokens=usage["total_tokens"],
+                estimated_usd=usage["estimated_usd"],
+                model_hint=usage.get("model_hint"),
+                query_preview=query[:200] if query else None,
+                source=source,
+            )
+    except Exception:  # do not fail the request if logging fails
+        usage = {}
+
     output = ""
     for m in reversed(out_messages):
         if hasattr(m, "content") and m.content and isinstance(m.content, str):
@@ -196,4 +219,5 @@ def run_agent(
     return {
         "output": output or "I couldn't generate a response. Please try again.",
         "messages": out_messages,
+        "usage": usage,
     }
