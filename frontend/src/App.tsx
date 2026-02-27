@@ -100,7 +100,7 @@ function App() {
     <div className={`app ${isSidebarOpen ? "" : "sidebar-closed"}`}>
       <aside className="sidebar">
         <div className="sidebar-header-row">
-          <h3>AgentForge Clinical</h3>
+          <h3><span className="sidebar-logo-icon">⚕️</span> AgentForge Clinical</h3>
           <button 
             className="sidebar-toggle" 
             onClick={() => setIsSidebarOpen(false)}
@@ -159,7 +159,7 @@ function App() {
         <header className="header">
           <h1 className="title">
             <span>+</span>
-            <span>AGENTFORGE CLINICAL</span>
+            <span>AGENTFORGE AI ASSISTANT</span>
           </h1>
           <p className="subtitle">
             Ask me to check drug interactions, look up symptoms, find providers, or check insurance.
