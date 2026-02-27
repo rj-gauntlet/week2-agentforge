@@ -20,4 +20,8 @@ export default defineConfig({
       'react-dom/client': 'https://esm.sh/react-dom@18.3.1/client',
     },
   },
+  // Allow Railway and other hosts when serving preview in production
+  preview: {
+    allowedHosts: true,
+  },
 })
