@@ -179,7 +179,7 @@
 
 ### Afternoon
 
-- [ ] **AI Cost Analysis:** Dev spend (tokens, calls, observability). Production table for 100 / 1K / 10K / 100K users with assumptions (queries per user, tokens, tool calls, verification).
+- [x] **AI Cost Analysis:** Dev spend (tokens, calls, observability). Production table for 100 / 1K / 10K / 100K users with assumptions (queries per user, tokens, tool calls, verification).
 - [ ] **Agent Architecture Doc:** Finalize 1–2 pages (all sections from PRD template).
 - [x] **README / setup guide:** Repo README with setup, architecture overview, deployed link.
 
