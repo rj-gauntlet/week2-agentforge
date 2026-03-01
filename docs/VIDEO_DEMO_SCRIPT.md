@@ -86,7 +86,7 @@ Check this out—I'm pulling up WhatsApp. By connecting our API to Twilio, I can
 
 ---
 
-## Section 7: Evals & Wrap Up (5:15 – 6:00)
+## Section 7: Evals, Challenges & Wrap Up (5:15 – 6:30)
 
 **[Visual:]** Switch over to VS Code or your terminal, showing the root of the repository.
 **[Action:]** Run the eval harness command: `python scripts/run_eval_harness.py`. Let the green "PASS" texts roll down the screen and show the final 100% summary.
@@ -97,6 +97,10 @@ I'll run our end-to-end evaluation suite right now. We have 56 test cases coveri
 
 As part of our Open Source contribution, we are releasing this entire 56-case evaluation dataset so others can use it to benchmark their own healthcare agents.
 
-I want to quickly touch on an architectural tradeoff we made for our Hero Tool. For our MVP, we initially used a curated, static JSON dataset for the drug interaction checker to guarantee fast, deterministic results for testing. However, for this final build, we upgraded that tool to exclusively query the live, public FDA API. The tradeoff here is we lose a bit of speed due to network latency, and introduce the risk of the FDA API experiencing downtime. But in a clinical setting like OpenEMR, the benefit of having perfectly up-to-date, real-world pharmacological data vastly outweighs the cost of a few extra milliseconds of loading time.
+**[Visual:]** Bring the browser back up showing the custom React UI.
+**[Audio:]**
+"Building this wasn't without its challenges. For instance, we originally built our MVP frontend using Streamlit because it was incredibly fast to stand up. However, we quickly realized that Streamlit lacked the deep UI customizability we needed to achieve this specific 8-bit retro clinical theme. So, we made the architectural pivot to decouple the stack—rewriting the frontend entirely in React and Vite, and connecting it to our standalone FastAPI backend. This added development overhead, but ultimately gave us total control over the user experience.
+
+I also want to quickly touch on an architectural tradeoff we made for our Hero Tool. For our MVP, we initially used a curated, static JSON dataset for the drug interaction checker to guarantee fast, deterministic results for testing. However, for this final build, we upgraded that tool to exclusively query the live, public FDA API. The tradeoff here is we lose a bit of speed due to network latency, and introduce the risk of the FDA API experiencing downtime. But in a clinical setting like OpenEMR, the benefit of having perfectly up-to-date, real-world pharmacological data vastly outweighs the cost of a few extra milliseconds of loading time.
 
 And that’s AgentForge! A fast, observable, multi-channel healthcare assistant with strict safety verification. Thanks for watching!"
