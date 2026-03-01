@@ -185,6 +185,20 @@ def health():
     return {"status": "ok"}
 
 
+from fastapi.responses import RedirectResponse
+
+@app.get("/video")
+def redirect_to_video():
+    """Redirect to the final demo video."""
+    # TODO: Update this URL once the final demo video is uploaded
+    return RedirectResponse(url="https://youtube.com/")
+
+@app.get("/social")
+def redirect_to_social():
+    """Redirect to the final social media post."""
+    # TODO: Update this URL once the social post is live
+    return RedirectResponse(url="https://twitter.com/")
+
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     """
