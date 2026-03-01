@@ -159,20 +159,21 @@ function App() {
           </button>
         )}
         <header className="header">
-          <h1 className="title">
-            <span>+</span>
-            <span>AGENTFORGE AI ASSISTANT</span>
-          </h1>
+          <div className="header-top">
+            <h1 className="title">
+              <span>+</span>
+              <span>AGENTFORGE AI ASSISTANT</span>
+            </h1>
+            <div className="whatsapp-notice">
+              <p>
+                Try it via <span className="highlight">WhatsApp!</span> Text <span className="highlight">+1 (415) 523-8886</span> with code <span className="highlight">join soon-vowel</span>
+              </p>
+            </div>
+          </div>
           <p className="subtitle">
             Ask me to check drug interactions, look up symptoms, find providers, or check insurance.
           </p>
         </header>
-
-        <div className="whatsapp-notice">
-          <p>
-            <strong>Note:</strong> You can also interact with AgentForge via WhatsApp! Text us at <strong>+1 (415) 523-8886</strong> with the code <strong>join soon-vowel</strong> to connect.
-          </p>
-        </div>
 
         <div className="messages">
           {messages.map((msg, i) => (
@@ -221,12 +222,22 @@ function App() {
               </div>
             </div>
           ))}
-          {loading && <p className="spinner">QUERYING DATABASE...</p>}
-          {error && <p className="error">{error}</p>}
+          {loading && (
+            <div className="message assistant">
+              <div className="bubble">
+                <span className="spinner-text">
+                  QUERYING DATABASE... <span className="loader"></span>
+                </span>
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 
         <div className="input-area">
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem', minHeight: '24px' }}>
+            {error && <span className="error" style={{ margin: 0, fontSize: '0.85rem' }}>{error}</span>}
+          </div>
           <form onSubmit={handleSubmit}>
             <input
               type="text"

@@ -17,12 +17,10 @@ REFERENCE_RANGES = {
     "wbc": {"min": 4.5, "max": 11.0, "unit": "10^9/L", "description": "White blood cell count. High levels may indicate infection."},
     "platelets": {"min": 150.0, "max": 450.0, "unit": "10^9/L", "description": "Cell fragments that help with blood clotting."},
     "sodium": {"min": 135.0, "max": 145.0, "unit": "mEq/L", "description": "An electrolyte crucial for nerve and muscle function."},
-    "potassium": {"min": 13.5, "max": 5.2, "unit": "mEq/L", "description": "Helps with nerve function and muscle contraction. (Note: standard is 3.5 to 5.2)"},
+    "potassium": {"min": 3.5, "max": 5.2, "unit": "mEq/L", "description": "Helps with nerve function and muscle contraction. (Note: standard is 3.5 to 5.2)"},
     "creatinine": {"min": 0.6, "max": 1.2, "unit": "mg/dL", "description": "Waste product filtered by kidneys. High levels may indicate reduced kidney function."}
 }
 
-# Fix potassium standard range
-REFERENCE_RANGES["potassium"]["min"] = 3.5
 
 def _normalize_key(key: str) -> str:
     key = key.lower().replace(" ", "_")

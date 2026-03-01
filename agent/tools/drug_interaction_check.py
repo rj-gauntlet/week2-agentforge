@@ -85,7 +85,7 @@ def _lookup_interactions(medications):
             d1, d2 = meds[i], meds[j]
             key = _pair_key(d1, d2)
             
-            # 1. Try Live FDA API first!
+            # 1. Try Live FDA API
             api_result = _check_fda_api(d1, d2)
             
             if api_result:
@@ -93,14 +93,6 @@ def _lookup_interactions(medications):
                     "drugs": [d1, d2],
                     "severity": api_result[0],
                     "description": api_result[1],
-                })
-            # 2. Fallback to Local Dataset if API fails or returns 404
-            elif key in lookup:
-                info = lookup[key]
-                interactions.append({
-                    "drugs": [d1, d2],
-                    "severity": info["severity"],
-                    "description": f"(Source: Local Database) {info['description']}",
                 })
 
     if not interactions:
