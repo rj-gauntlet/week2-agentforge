@@ -197,7 +197,7 @@
 ### Morning
 
 - [x] **Deployed app:** Verify public URL; smoke test and one full user flow.
-- [x] **Demo video (3–5 min):** Agent in action, eval results, observability dashboard. Upload and link in submission.
+- [ ] **Demo video (3–5 min):** Agent in action, eval results, observability dashboard. Upload and link in submission.
 - [ ] **Submission checklist:** GitHub repo, demo video link, Pre-Search doc, Agent Architecture Doc, AI Cost Analysis, Eval dataset (50+ with results), Open source link, deployed URL.
 
 ### Afternoon
