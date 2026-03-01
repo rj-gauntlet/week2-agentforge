@@ -190,8 +190,7 @@ from fastapi.responses import RedirectResponse
 @app.get("/video")
 def redirect_to_video():
     """Redirect to the final demo video."""
-    # TODO: Update this URL once the final demo video is uploaded
-    return RedirectResponse(url="https://youtube.com/")
+    return RedirectResponse(url="https://www.loom.com/share/db381a6103674cce9141d63cd13c82f8")
 
 @app.get("/social")
 def redirect_to_social():
