@@ -175,7 +175,7 @@
 
 ### Morning
 
-- [ ] **Open source:** Complete chosen contribution — publish package / release dataset / open PR / publish tool / publish tutorial. Get link.
+- [x] **Open source:** Complete chosen contribution — publish package / release dataset / open PR / publish tool / publish tutorial. Get link.
 
 ### Afternoon
 

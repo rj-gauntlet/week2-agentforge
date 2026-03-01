@@ -93,6 +93,18 @@ Per the MVP requirements, this project includes a robust suite of end-to-end eva
 
 ---
 
+## Open Source Contribution: Healthcare Agent Eval Dataset
+
+As our Open Source contribution to the broader agentic healthcare community, we have released our comprehensive **AgentForge Healthcare Eval Dataset** directly within this repository. 
+
+- **What:** 56 highly-curated, structured test cases representing real-world clinical and administrative queries (e.g. drug interactions, contraindications, procedure lookup). 
+- **Where:** [`data/eval_cases.json`](./data/eval_cases.json)
+- **Why:** To give developers building healthcare AI assistants a robust baseline to benchmark tool-calling reliability, multi-step reasoning, and strict safety guardrails (including adversarial/jailbreak attempts).
+- **Use it:** The dataset is fully usable via our included eval harness. See [EVAL.md](./EVAL.md) for full documentation on the dataset schema and how to integrate it into your own testing pipelines.
+- **License:** Released under the MIT License.
+
+---
+
 ## Deployment
 
 Deploy the FastAPI app so it is **publicly accessible** (MVP requirement). Options:
