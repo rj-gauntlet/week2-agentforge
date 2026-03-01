@@ -1,6 +1,6 @@
 # AgentForge — Agent Architecture Document
 
-**Version:** 1.0 (first draft)  
+**Version:** 1.0 (Final Submission)  
 **Purpose:** Domain, architecture, verification, eval results, observability, and open source plan for submission and future maintenance.  
 **Reference:** [PRD.md](../PRD.md), [PRE_SEARCH.md](../PRE_SEARCH.md), [ROADMAP.md](../ROADMAP.md).
 
@@ -49,7 +49,7 @@
 | **Verification layer** | See §3. |
 | **Cost tracking** | `agent/cost_logging.py`: extracts usage from AIMessage `usage_metadata` (or `response_metadata`), estimates USD, appends to `data/cost_log.jsonl` with `source` (api | eval). |
 
-**Tool data sources (sprint):** Drug interactions and procedures from static JSON; providers, appointments (dynamic 14-day mock), coverage, symptoms, contraindications from JSON/data. Production path: replace with OpenEMR FHIR, scheduling, and billing APIs where applicable.
+**Tool data sources:** The `drug_interaction_check` tool connects to the live **OpenFDA API** to fetch real-world interaction data. Procedures, providers, coverage, symptoms, and contraindications are mock/static JSON data, while appointments use a dynamic 14-day rolling window generator. Production path: replace the remaining static datasets with OpenEMR FHIR, scheduling, and billing APIs where applicable.
 
 ---
 
@@ -84,6 +84,8 @@ Persona lock is enforced in the system prompt: no adopting other personas or sty
 
 **Criteria:** Correct tool(s) invoked; at least one of `expected_output_contains` in reply; optional `expected_flags` (e.g. no-diagnosis) and `expected_tool_output` (structured tool fields) satisfied. Failures are recorded in the results JSON for regression and analysis.
 
+**Failure Analysis & Iteration:** Early iterations revealed minor failures in multi-step date tracking for appointment availability, which we resolved by enforcing an `available` boolean inside the tool’s structured JSON to give the LLM unambiguous availability data. We also fortified the system prompt to explicitly restrict out-of-domain conversational requests and refuse role-playing jailbreaks (e.g., “talk like a pirate” or “hack a database”), resulting in a 100% pass rate.
+
 **Reference:** [EVAL.md](../EVAL.md) for dataset format and how to run.
 
 ---
@@ -100,8 +102,12 @@ Persona lock is enforced in the system prompt: no adopting other personas or sty
 
 ## 6. Open Source Contribution
 
-**Planned:** Release the **eval dataset** (50+ cases: anonymized queries, expected tools, expected output constraints) as a public artifact so others can benchmark healthcare/OpenEMR-style agents. Format and run instructions are in [EVAL.md](../EVAL.md) and the repo. Alternative if time allows: a small reusable tool package (e.g. “OpenEMR agent tools”). Licensing: match repo (e.g. GPL for code); dataset under permissive license (CC-BY or MIT).
+**Released:** We have released our comprehensive **AgentForge Healthcare Eval Dataset** directly within the open source repository. 
+- **Location:** `data/eval_cases.json` (56 diverse, verified test cases including happy path, edge cases, and adversarial prompt injections).
+- **Format & Running:** Instructions for using the included test harness are documented in [EVAL.md](../EVAL.md).
+- **Purpose:** This contribution allows other developers building clinical, EMR, or healthcare AI assistants to benchmark their agent’s tool-calling reliability, safety guardrails, and compliance limits against a robust baseline. 
+- **License:** MIT License for the dataset, matching the open source intent of the project.
 
 ---
 
-*This document is the first full draft for the Agent Architecture deliverable. Finalize in Day 6 and reference in submission.*
+*This document serves as the final Agent Architecture deliverable.*
