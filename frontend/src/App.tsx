@@ -39,9 +39,9 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [feedbackSent, setFeedbackSent] = useState<Set<number>>(new Set());
   const [presetQuery, setPresetQuery] = useState<string | null>(null);
-  const [showToolsUsed, setShowToolsUsed] = useState(true);
-  const [showUserFeedback, setShowUserFeedback] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showToolsUsed, setShowToolsUsed] = useState(false);
+  const [showUserFeedback, setShowUserFeedback] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const turnRef = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
