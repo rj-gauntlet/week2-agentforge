@@ -185,7 +185,7 @@
 
 ### Evening
 
-- [ ] **Pre-Search doc:** Ensure Pre-Search checklist (Phases 1–3) is saved and referenced in submission.
+- [x] **Pre-Search doc:** Ensure Pre-Search checklist (Phases 1–3) is saved and referenced in submission.
 - [x] **Final eval run:** 50+ cases with results; save as deliverable (and for open source if releasing dataset).
 
 ---

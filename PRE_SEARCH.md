@@ -228,9 +228,9 @@
 - [x] Phase 2: Framework, LLM, tools, observability, eval, verification decided
 - [x] Phase 3: Failure modes, security, testing, open source, deployment, iteration planned
 - [x] Stack summary and tool mapping written
-- [ ] **You:** Confirm domain (Healthcare/OpenEMR) — confirmed Generalist + hero tool
-- [ ] **You:** Fork OpenEMR on GitHub and clone locally
-- [ ] **You:** Save this file and this AI conversation as Pre-Search submission artifacts
+- [x] **You:** Confirm domain (Healthcare/OpenEMR) — confirmed Generalist + hero tool
+- [x] **You:** Fork OpenEMR on GitHub and clone locally
+- [x] **You:** Save this file and this AI conversation as Pre-Search submission artifacts
 
 ---
 
