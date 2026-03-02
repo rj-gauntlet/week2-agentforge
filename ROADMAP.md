@@ -207,7 +207,7 @@
 
 ### Before 10:59 PM CT
 
-- [ ] **Submit:** All links and files per course instructions.
+- [x] **Submit:** All links and files per course instructions.
 - [ ] **Interview prep:** Review PRD “Interview Prep”; rehearse framework choice, tool design, verification, evals, scaling.
 
 ### Stretch Goals (Final Submission)
