@@ -196,7 +196,7 @@ def redirect_to_video():
 def redirect_to_social():
     """Redirect to the final social media post."""
     # TODO: Update this URL once the social post is live
-    return RedirectResponse(url="https://twitter.com/")
+    return RedirectResponse(url="https://www.linkedin.com/posts/rujadughele_agentforge-healthcare-assistant-revolutionizing-activity-7434149629052755968-u-_9?utm_source=share&utm_medium=member_desktop&rcm=ACoAAA4V6ZgBWqALHufUh5CJtN7ydhAwslOs9Ec")
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
