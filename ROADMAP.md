@@ -202,7 +202,7 @@
 
 ### Afternoon
 
-- [ ] **Social post:** X or LinkedIn — description, features, demo/screenshots, tag @GauntletAI.
+- [x] **Social post:** X or LinkedIn — description, features, demo/screenshots, tag @GauntletAI.
 - [ ] **Last pass:** Performance targets, verification accuracy, hallucination rate — document in architecture doc or cost analysis where relevant.
 
 ### Before 10:59 PM CT
